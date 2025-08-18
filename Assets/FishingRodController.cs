@@ -1,13 +1,14 @@
 using UnityEngine;
 
-public class FishingRod : MonoBehaviour
+public class FishingRodController : MonoBehaviour
 {
     // Unity UI has higher priority for these fields
     public GameObject fishingRodPrefab;
     public float moveSpeed = 3f;
-    public float maxRangeForward = 3f;
-    public float maxRangeBackward = 1f;
+    public float maxRange = 3f;
     public Vector3 spawnLocation = new Vector3(0, 0, 0);
+
+    public float rodPosition;
 
     private void Start()
     {
@@ -18,6 +19,7 @@ public class FishingRod : MonoBehaviour
         }
         GameObject rodInstance = Instantiate(fishingRodPrefab, spawnLocation, Quaternion.identity);
         rodInstance.transform.SetParent(transform);
+        rodPosition = rodInstance.transform.position.z;
     }
 
     private void Update()
@@ -27,7 +29,8 @@ public class FishingRod : MonoBehaviour
         if (scrollInput != 0)
         {
             Vector3 newPosition = transform.position + transform.forward * scrollInput * moveSpeed;
-            newPosition.z = Mathf.Clamp(newPosition.z, spawnLocation.z - maxRangeBackward, spawnLocation.z + maxRangeForward);
+            newPosition.z = Mathf.Clamp(newPosition.z, 0, spawnLocation.z + maxRange);
+            rodPosition = newPosition.z;
             transform.position = newPosition;
         }
     }
