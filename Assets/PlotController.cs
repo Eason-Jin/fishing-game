@@ -2,36 +2,39 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class XYPlotController : MonoBehaviour
+public class PlotController : MonoBehaviour
 {
     [Header("Dependencies")]
     public FishingRodController fishingRodController;
     public RectTransform plotArea;
 
     [Header("Settings")]
-    public float proximityThreshold = 0.2f; // Distance threshold for color change 
+    public float proximityThreshold1 = 0.3f;
+    public float proximityThreshold2 = 0.8f;
 
     // Waveform control variables
-    public float flatDuration = 1f; // Duration of flat regions
-    public float slopeDuration = 0.5f; // Duration of sloped regions
+    public float flatDuration = 3f; // Duration of flat regions
+    public float slopeDuration = 1f; // Duration of sloped regions
+    public float scrollSpeed = 0.5f;
 
     [Header("Plot Appearance")]
     public Color axisColor = Color.white;
     public Color waveColor = Color.cyan;
     public Color verticalLineColor = Color.red;
     public Color dotColor = Color.yellow;
-    public float lineWidth = 2f;
+    public float lineWidth = 10f;
+
+    public DotStatus dotStatus;
 
     // Private variables
     private float time = 0f;
     private float yMax;
     private float yStart;
-    private float scrollSpeed;
+    private float xStart;
 
     // Plot dimensions
     private float plotWidth;
     private float plotHeight;
-    private Vector2 plotCenter;
 
     // Component references (created programmatically)
     private GameObject waveformRenderer;
@@ -41,14 +44,9 @@ public class XYPlotController : MonoBehaviour
     // Axis renderers
     private GameObject xAxisRenderer;
     private GameObject yAxisRenderer;
-    private GameObject xArrowHead1;
-    private GameObject xArrowHead2;
-    private GameObject yArrowHead1;
-    private GameObject yArrowHead2;
 
     // Wave generation
     private int waveResolution = 200;
-    private float[] wavePoints;
 
     private void Start()
     {
@@ -65,19 +63,24 @@ public class XYPlotController : MonoBehaviour
         SetupDot();
     }
 
+    private void Update()
+    {
+        time += Time.deltaTime;
+
+        UpdateWaveform();
+        UpdateDotPosition(fishingRodController.rodPosition);
+        UpdateVerticalLineColor();
+    }
+
     private void InitializePlotParameters()
     {
         float panelHeight = plotArea.rect.height;
         plotWidth = plotArea.rect.width;
         plotHeight = plotArea.rect.height;
-        plotCenter = plotArea.rect.center;
 
         yMax = fishingRodController.maxRange;
         yStart = fishingRodController.rodPosition;
-        scrollSpeed = fishingRodController.moveSpeed;
-
-        // Initialize wave points array
-        wavePoints = new float[waveResolution];
+        xStart = 0.5f;
     }
 
     private void CreatePlotComponents()
@@ -114,13 +117,9 @@ public class XYPlotController : MonoBehaviour
 
         // X-Axis
         xAxisRenderer = CreateUILine("X-Axis", axisColor, axisParent.transform);
-        xArrowHead1 = CreateUILine("X-Arrow1", axisColor, axisParent.transform);
-        xArrowHead2 = CreateUILine("X-Arrow2", axisColor, axisParent.transform);
 
         // Y-Axis
         yAxisRenderer = CreateUILine("Y-Axis", axisColor, axisParent.transform);
-        yArrowHead1 = CreateUILine("Y-Arrow1", axisColor, axisParent.transform);
-        yArrowHead2 = CreateUILine("Y-Arrow2", axisColor, axisParent.transform);
 
         UpdateAxes();
     }
@@ -152,32 +151,10 @@ public class XYPlotController : MonoBehaviour
             new Vector2(plotWidth / 2 - 20, xAxisY),
             lineWidth);
 
-        // X-Axis arrow head
-        SetUILinePosition(xArrowHead1,
-            new Vector2(plotWidth / 2 - 20, xAxisY + 10),
-            new Vector2(plotWidth / 2, xAxisY),
-            lineWidth);
-
-        SetUILinePosition(xArrowHead2,
-            new Vector2(plotWidth / 2 - 20, xAxisY - 10),
-            new Vector2(plotWidth / 2, xAxisY),
-            lineWidth);
-
         // Y-Axis (vertical line)
         SetUILinePosition(yAxisRenderer,
             new Vector2(yAxisX, -plotHeight / 2),
             new Vector2(yAxisX, plotHeight / 2 - 20),
-            lineWidth);
-
-        // Y-Axis arrow head
-        SetUILinePosition(yArrowHead1,
-            new Vector2(yAxisX - 10, plotHeight / 2 - 20),
-            new Vector2(yAxisX, plotHeight / 2),
-            lineWidth);
-
-        SetUILinePosition(yArrowHead2,
-            new Vector2(yAxisX + 10, plotHeight / 2 - 20),
-            new Vector2(yAxisX, plotHeight / 2),
             lineWidth);
     }
 
@@ -200,14 +177,6 @@ public class XYPlotController : MonoBehaviour
         UpdateDotPosition(yStart);
     }
 
-    private void Update()
-    {
-        time += Time.deltaTime;
-
-        UpdateWaveform();
-        UpdateDotPosition(fishingRodController.rodPosition);
-    }
-
     private void UpdateWaveform()
     {
         if (waveformRenderer == null) return;
@@ -224,7 +193,7 @@ public class XYPlotController : MonoBehaviour
 
         for (int i = 0; i < waveResolution; i++)
         {
-            float xPlot = (float)i / (waveResolution - 1) * 4f; // X range from 0 to 4
+            float xPlot = (float)i / (waveResolution - 1) * 4f;
             float yPlot = GetSquareWaveValue(xPlot);
 
             Vector2 localPos = new Vector2(PlotToLocalX(xPlot), PlotToLocalY(yPlot));
@@ -249,8 +218,8 @@ public class XYPlotController : MonoBehaviour
 
     private float GetSquareWaveValue(float x)
     {
-        // Shift x leftward based on time and scroll speed
-        float shiftedX = x + time * scrollSpeed;
+        // Shift x leftward based on time, scroll speed
+        float shiftedX = x + xStart + time * scrollSpeed;
 
         // Calculate square wave
         float cycleDuration = flatDuration * 2 + slopeDuration * 2;
@@ -371,5 +340,32 @@ public class XYPlotController : MonoBehaviour
         rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
+    }
+
+    private void UpdateVerticalLineColor()
+    {
+        if (verticalLine == null || dot == null) return;
+
+        // Calculate the distance between the dot and the vertical line
+        float dotPosition = fishingRodController.rodPosition;
+        float waveValue = GetSquareWaveValue(1f);
+        Debug.Log($"Dot Position: {dotPosition}, Wave Value: {waveValue}");
+        float distance = Mathf.Abs(dotPosition - waveValue);
+
+        if (distance < proximityThreshold1)
+        {
+            verticalLine.GetComponent<Image>().color = Color.green;
+            dotStatus = DotStatus.OnTheLine;
+        }
+        else if (distance < proximityThreshold2)
+        {
+            verticalLine.GetComponent<Image>().color = Color.yellow;
+            dotStatus = DotStatus.CloseEnough;
+        }
+        else
+        {
+            verticalLine.GetComponent<Image>().color = Color.red;
+            dotStatus = DotStatus.NotOnTheLine;
+        }
     }
 }

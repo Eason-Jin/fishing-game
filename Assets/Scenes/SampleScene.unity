@@ -153,9 +153,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishingRodPrefab: {fileID: 8661711431703123294, guid: e84920c8d7f216045928e28d6b187e84, type: 3}
   moveSpeed: 3
-  maxRangeForward: 3
-  maxRangeBackward: 1
+  maxRange: 3
   spawnLocation: {x: 0, y: 0, z: 0}
+  rodPosition: 0
 --- !u!4 &194652233
 Transform:
   m_ObjectHideFlags: 0
@@ -447,14 +447,16 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fishingRodController: {fileID: 194652232}
   plotArea: {fileID: 1306040764}
-  proximityThreshold: 0.2
+  proximityThreshold1: 0.3
+  proximityThreshold2: 0.8
   flatDuration: 1
   slopeDuration: 0.5
+  scrollSpeed: 0.25
   axisColor: {r: 1, g: 1, b: 1, a: 1}
   waveColor: {r: 0, g: 1, b: 1, a: 1}
   verticalLineColor: {r: 1, g: 0, b: 0, a: 1}
   dotColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  lineWidth: 2
+  lineWidth: 5
 --- !u!1 &1393675587
 GameObject:
   m_ObjectHideFlags: 0
