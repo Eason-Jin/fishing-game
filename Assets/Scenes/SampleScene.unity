@@ -448,7 +448,7 @@ MonoBehaviour:
   fishingRodController: {fileID: 194652232}
   plotArea: {fileID: 1306040764}
   proximityThreshold1: 0.3
-  proximityThreshold2: 0.8
+  proximityThreshold2: 0.6
   flatDuration: 1
   slopeDuration: 0.5
   scrollSpeed: 0.25
@@ -457,6 +457,8 @@ MonoBehaviour:
   verticalLineColor: {r: 1, g: 0, b: 0, a: 1}
   dotColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
   lineWidth: 5
+  axisLineWidth: 5
+  dotStatus: 0
 --- !u!1 &1393675587
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,7 @@ public class PlotController : MonoBehaviour
 
     [Header("Settings")]
     public float proximityThreshold1 = 0.3f;
-    public float proximityThreshold2 = 0.8f;
+    public float proximityThreshold2 = 0.6f;
 
     // Waveform control variables
     public float flatDuration = 3f; // Duration of flat regions
@@ -23,6 +23,7 @@ public class PlotController : MonoBehaviour
     public Color verticalLineColor = Color.red;
     public Color dotColor = Color.yellow;
     public float lineWidth = 10f;
+    public float axisLineWidth = 5f;
 
     public DotStatus dotStatus;
 
@@ -58,7 +59,6 @@ public class PlotController : MonoBehaviour
 
         InitializePlotParameters();
         CreatePlotComponents();
-        SetupAxisRenderers();
         SetupVerticalLine();
         SetupDot();
     }
@@ -91,6 +91,18 @@ public class PlotController : MonoBehaviour
         // Create vertical line using UI Image
         verticalLine = CreateUILine("VerticalLine", verticalLineColor);
 
+        // Create axis renderers as children of the plot area
+        GameObject axisParent = new GameObject("Axes");
+        axisParent.transform.SetParent(plotArea);
+        axisParent.transform.localPosition = Vector3.zero;
+        axisParent.transform.localScale = Vector3.one;
+
+        // X-Axis
+        xAxisRenderer = CreateUILine("X-Axis", axisColor, axisParent.transform);
+
+        // Y-Axis
+        yAxisRenderer = CreateUILine("Y-Axis", axisColor, axisParent.transform);
+
         // Create dot
         GameObject dotObj = new GameObject("Dot");
         dotObj.transform.SetParent(plotArea);
@@ -105,21 +117,6 @@ public class PlotController : MonoBehaviour
 
         // Set dot size
         dot.sizeDelta = new Vector2(10, 10);
-    }
-
-    private void SetupAxisRenderers()
-    {
-        // Create axis renderers as children of the plot area
-        GameObject axisParent = new GameObject("Axes");
-        axisParent.transform.SetParent(plotArea);
-        axisParent.transform.localPosition = Vector3.zero;
-        axisParent.transform.localScale = Vector3.one;
-
-        // X-Axis
-        xAxisRenderer = CreateUILine("X-Axis", axisColor, axisParent.transform);
-
-        // Y-Axis
-        yAxisRenderer = CreateUILine("Y-Axis", axisColor, axisParent.transform);
 
         UpdateAxes();
     }
@@ -149,13 +146,13 @@ public class PlotController : MonoBehaviour
         SetUILinePosition(xAxisRenderer,
             new Vector2(-plotWidth / 2, xAxisY),
             new Vector2(plotWidth / 2 - 20, xAxisY),
-            lineWidth);
+            axisLineWidth);
 
         // Y-Axis (vertical line)
         SetUILinePosition(yAxisRenderer,
             new Vector2(yAxisX, -plotHeight / 2),
             new Vector2(yAxisX, plotHeight / 2 - 20),
-            lineWidth);
+            axisLineWidth);
     }
 
     private void SetupVerticalLine()
@@ -274,18 +271,6 @@ public class PlotController : MonoBehaviour
         return normalizedY * (plotHeight / 3f); // Use 2/3 of plot height for better visibility
     }
 
-    // Public method to update dot position manually if needed
-    public void SetDotYPosition(float yValue)
-    {
-        UpdateDotPosition(yValue);
-    }
-
-    // Get the current wave value at x=1 for external use
-    public float GetCurrentWaveValueAtX1()
-    {
-        return GetSquareWaveValue(1f);
-    }
-
     // Helper method to create a simple circle sprite
     private Sprite CreateCircleSprite()
     {
@@ -349,7 +334,6 @@ public class PlotController : MonoBehaviour
         // Calculate the distance between the dot and the vertical line
         float dotPosition = fishingRodController.rodPosition;
         float waveValue = GetSquareWaveValue(1f);
-        Debug.Log($"Dot Position: {dotPosition}, Wave Value: {waveValue}");
         float distance = Mathf.Abs(dotPosition - waveValue);
 
         if (distance < proximityThreshold1)
@@ -367,5 +351,6 @@ public class PlotController : MonoBehaviour
             verticalLine.GetComponent<Image>().color = Color.red;
             dotStatus = DotStatus.NotOnTheLine;
         }
+        Debug.Log($"Dot Status: {dotStatus}");
     }
 }
