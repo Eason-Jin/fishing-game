@@ -61,6 +61,7 @@ public class PlotController : MonoBehaviour
         CreatePlotComponents();
         SetupVerticalLine();
         SetupDot();
+        UpdateVerticalLineColor();
     }
 
     private void Update()
