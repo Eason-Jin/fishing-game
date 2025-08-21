@@ -2,10 +2,11 @@ using UnityEngine;
 
 public class FishingRodController : MonoBehaviour
 {
-    // Unity UI has higher priority for these fields
+    [Header("GameObject")]
     public GameObject fishingRodPrefab;
-    public float moveSpeed = 3f;
-    public float maxRange = 3f;
+    [Header("Settings")]
+    public float moveSpeed = 9.0f;
+    public float maxAngle = 45.0f;
     public Vector3 spawnLocation = new Vector3(0, 0, 0);
 
     public float rodPosition;
@@ -18,8 +19,9 @@ public class FishingRodController : MonoBehaviour
             return;
         }
         GameObject rodInstance = Instantiate(fishingRodPrefab, spawnLocation, Quaternion.identity);
+        transform.localEulerAngles = new Vector3(350, 0, 0);
         rodInstance.transform.SetParent(transform);
-        rodPosition = rodInstance.transform.position.z;
+        rodPosition = 0;
     }
 
     private void Update()
@@ -28,10 +30,12 @@ public class FishingRodController : MonoBehaviour
 
         if (scrollInput != 0)
         {
-            Vector3 newPosition = transform.position + transform.forward * scrollInput * moveSpeed;
-            newPosition.z = Mathf.Clamp(newPosition.z, 0, spawnLocation.z + maxRange);
-            rodPosition = newPosition.z;
-            transform.position = newPosition;
+            float currentAngle = transform.localEulerAngles.x;
+            float newAngle = currentAngle + scrollInput * moveSpeed;
+            rodPosition = 350 - newAngle;
+            rodPosition = Mathf.Clamp(rodPosition, 0, maxAngle);
+            newAngle = Mathf.Clamp(newAngle, 350 - maxAngle, 350);
+            transform.localEulerAngles = new Vector3(newAngle, transform.localEulerAngles.y, transform.localEulerAngles.z);
         }
     }
 }

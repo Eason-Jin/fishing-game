@@ -9,8 +9,8 @@ public class PlotController : MonoBehaviour
     public RectTransform plotArea;
 
     [Header("Settings")]
-    public float proximityThreshold1 = 0.3f;
-    public float proximityThreshold2 = 0.6f;
+    public float proximityThreshold1 = 3.0f;
+    public float proximityThreshold2 = 6.0f;
 
     // Waveform control variables
     public float flatDuration = 3f; // Duration of flat regions
@@ -78,7 +78,7 @@ public class PlotController : MonoBehaviour
         plotWidth = plotArea.rect.width;
         plotHeight = plotArea.rect.height;
 
-        yMax = fishingRodController.maxRange;
+        yMax = fishingRodController.maxAngle;
         yStart = fishingRodController.rodPosition;
         xStart = 0.5f;
     }
@@ -351,6 +351,5 @@ public class PlotController : MonoBehaviour
             verticalLine.GetComponent<Image>().color = Color.red;
             dotStatus = DotStatus.NotOnTheLine;
         }
-        Debug.Log($"Dot Status: {dotStatus}");
     }
 }
