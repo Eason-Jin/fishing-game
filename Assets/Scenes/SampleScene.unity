@@ -152,8 +152,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   fishingRodPrefab: {fileID: 8661711431703123294, guid: e84920c8d7f216045928e28d6b187e84, type: 3}
-  moveSpeed: 3
-  maxRange: 3
+  moveSpeed: 9
+  maxAngle: 45
   spawnLocation: {x: 0, y: 0, z: 0}
   rodPosition: 0
 --- !u!4 &194652233
@@ -171,6 +171,64 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &615646668
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 615646669}
+  - component: {fileID: 615646670}
+  m_Layer: 0
+  m_Name: PlotController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &615646669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 615646668}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -440.10327, y: -192.20695, z: -0.2306943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1393675591}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &615646670
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 615646668}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6b7b04e47e78ba747ac33770a5059c94, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  fishingRodController: {fileID: 194652232}
+  plotArea: {fileID: 1306040764}
+  proximityThreshold1: 3
+  proximityThreshold2: 6
+  flatDuration: 1
+  slopeDuration: 0.5
+  scrollSpeed: 0.25
+  axisColor: {r: 1, g: 1, b: 1, a: 1}
+  waveColor: {r: 0, g: 1, b: 1, a: 1}
+  verticalLineColor: {r: 1, g: 0, b: 0, a: 1}
+  dotColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
+  lineWidth: 5
+  axisLineWidth: 3
+  dotStatus: 0
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -368,7 +426,6 @@ GameObject:
   - component: {fileID: 1306040764}
   - component: {fileID: 1306040766}
   - component: {fileID: 1306040765}
-  - component: {fileID: 1306040767}
   m_Layer: 5
   m_Name: PlotPanel
   m_TagString: Untagged
@@ -433,32 +490,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1306040763}
   m_CullTransparentMesh: 1
---- !u!114 &1306040767
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1306040763}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6b7b04e47e78ba747ac33770a5059c94, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fishingRodController: {fileID: 194652232}
-  plotArea: {fileID: 1306040764}
-  proximityThreshold1: 0.3
-  proximityThreshold2: 0.6
-  flatDuration: 1
-  slopeDuration: 0.5
-  scrollSpeed: 0.25
-  axisColor: {r: 1, g: 1, b: 1, a: 1}
-  waveColor: {r: 0, g: 1, b: 1, a: 1}
-  verticalLineColor: {r: 1, g: 0, b: 0, a: 1}
-  dotColor: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
-  lineWidth: 5
-  axisLineWidth: 5
-  dotStatus: 0
 --- !u!1 &1393675587
 GameObject:
   m_ObjectHideFlags: 0
@@ -554,6 +585,7 @@ RectTransform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1306040764}
+  - {fileID: 615646669}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -561,6 +593,53 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0, y: 0}
+--- !u!1 &1647920951
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1647920952}
+  - component: {fileID: 1647920953}
+  m_Layer: 0
+  m_Name: FishController
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1647920952
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647920951}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0.096729755, y: 0.3930509, z: -0.2306943}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1647920953
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1647920951}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ff01f8fc424e2634a937c156efc5c211, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  plotController: {fileID: 615646670}
+  fishPrefab: {fileID: 0}
+  startingFishDepth: -100
 --- !u!1 &1997749714
 GameObject:
   m_ObjectHideFlags: 0
@@ -638,3 +717,4 @@ SceneRoots:
   - {fileID: 194652233}
   - {fileID: 1393675591}
   - {fileID: 1997749717}
+  - {fileID: 1647920952}
