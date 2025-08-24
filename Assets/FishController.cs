@@ -12,7 +12,7 @@ public class FishController : MonoBehaviour
 
     private GameObject fishInstance;
 
-    private Vector3 fishSpawnLocation = new Vector3(0, -3, 10);
+    private Vector3 fishSpawnLocation = new Vector3(0, -3, 12);
     private float radius = 3f;           // size of the circle
     private float speed = 1f;            // how fast it moves
     private float squiggleAmplitude = 2f; // how wavy it is
@@ -36,11 +36,9 @@ public class FishController : MonoBehaviour
             //return;
         }
 
-        // spawn temporary fish instance (primitive) and position
-        fishInstance = GameObject.CreatePrimitive(PrimitiveType.Capsule);
-        fishInstance.transform.position = fishSpawnLocation;
+        // spawn temporary fish instance and position
+        fishInstance = Instantiate(fishPrefab, fishSpawnLocation, Quaternion.identity);
         fishInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-        fishInstance.transform.rotation = Quaternion.identity;
 
         // add the fishing line component
         FishingRodController rodController = FindObjectOfType<FishingRodController>();
@@ -106,6 +104,8 @@ public class FishController : MonoBehaviour
                 }
             }
 
+            Vector3 previousPosition = fishInstance.transform.position;
+
             timeCounter += Time.deltaTime * speed;
 
             // Circular path + squiggle
@@ -113,7 +113,16 @@ public class FishController : MonoBehaviour
             float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
             float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude; // squiggle in X-Z plane
 
-            fishInstance.transform.position = new Vector3(x + offset, fishSpawnLocation.y, z + offset);
+            Vector3 newPosition = new Vector3(x + offset, fishSpawnLocation.y, z + offset);
+            fishInstance.transform.position = newPosition;
+
+            // Rotate the fish to face its direction of movement
+            Vector3 direction = (newPosition - previousPosition).normalized;
+            if (direction != Vector3.zero)
+            {
+                Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+                fishInstance.transform.rotation = Quaternion.Slerp(fishInstance.transform.rotation, targetRotation, Time.deltaTime * 5f);
+            }
         }
     }
     public GameObject GetFishInstance()
