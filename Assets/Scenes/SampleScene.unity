@@ -156,6 +156,7 @@ MonoBehaviour:
   maxAngle: 45
   spawnLocation: {x: 0, y: 0, z: 0}
   rodPosition: 0
+  fishingLine: {fileID: 0}
 --- !u!4 &194652233
 Transform:
   m_ObjectHideFlags: 0
@@ -638,7 +639,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plotController: {fileID: 615646670}
-  fishPrefab: {fileID: 0}
+  fishPrefab: {fileID: 3447987514716299209, guid: c27454a698053c64a959a979de02afc5, type: 3}
   startingFishDepth: -100
 --- !u!1 &1997749714
 GameObject:
