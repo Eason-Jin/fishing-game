@@ -4,12 +4,15 @@ public class FishingRodController : MonoBehaviour
 {
     [Header("GameObject")]
     public GameObject fishingRodPrefab;
+    private GameObject rodInstance;
     [Header("Settings")]
     public float moveSpeed = 9.0f;
     public float maxAngle = 45.0f;
     public Vector3 spawnLocation = new Vector3(0, 0, 0);
 
     public float rodPosition;
+
+    public FishingLine fishingLine;
 
     private void Start()
     {
@@ -18,7 +21,7 @@ public class FishingRodController : MonoBehaviour
             Debug.LogError("Fishing rod prefab is not assigned.");
             return;
         }
-        GameObject rodInstance = Instantiate(fishingRodPrefab, spawnLocation, Quaternion.identity);
+        rodInstance = Instantiate(fishingRodPrefab, spawnLocation, Quaternion.identity);
         transform.localEulerAngles = new Vector3(350, 0, 0);
         rodInstance.transform.SetParent(transform);
         rodPosition = 0;
@@ -37,5 +40,9 @@ public class FishingRodController : MonoBehaviour
             newAngle = Mathf.Clamp(newAngle, 350 - maxAngle, 350);
             transform.localEulerAngles = new Vector3(newAngle, transform.localEulerAngles.y, transform.localEulerAngles.z);
         }
+    }
+    public GameObject GetFishingRodInstance()
+    {
+        return rodInstance;
     }
 }
