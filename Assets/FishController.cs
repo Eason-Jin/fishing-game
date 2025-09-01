@@ -21,6 +21,7 @@ public class FishController : MonoBehaviour
     private FishingLine fishingLine;
 
     private DepthIndicatorController depthIndicator;
+    private ScoreTimeController scoreTimeController;
 
     void Start()
     {
@@ -31,6 +32,7 @@ public class FishController : MonoBehaviour
         fishDepth = startingFishDepth;
 
         depthIndicator = FindObjectOfType<DepthIndicatorController>();
+        scoreTimeController = FindObjectOfType<ScoreTimeController>();
 
         StartCoroutine(UpdateFishState());
 
@@ -76,7 +78,7 @@ public class FishController : MonoBehaviour
                 fishDepth -= 1;
             }
 
-            if (fishDepth == 0)
+            if (fishDepth >= 0)
             {
                 score += 100;
                 fishDepth = startingFishDepth;
@@ -93,6 +95,14 @@ public class FishController : MonoBehaviour
                 depthIndicator.UpdateProgress(fishDepth);
             } else {
                 Debug.LogWarning("DepthIndicatorController is not assigned.");
+            }
+
+            if (scoreTimeController != null)
+            {
+                scoreTimeController.UpdateScore(score);
+                scoreTimeController.UpdateTime(Mathf.RoundToInt(Time.time));
+            } else {
+                Debug.LogWarning("ScoreTimeController is not assigned.");
             }
 
             yield return new WaitForSeconds(1f);
