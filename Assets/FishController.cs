@@ -20,6 +20,8 @@ public class FishController : MonoBehaviour
 
     private FishingLine fishingLine;
 
+    private DepthIndicatorController depthIndicator;
+
     void Start()
     {
         if (plotController != null)
@@ -27,6 +29,8 @@ public class FishController : MonoBehaviour
             dotStatus = plotController.dotStatus;
         }
         fishDepth = startingFishDepth;
+
+        depthIndicator = FindObjectOfType<DepthIndicatorController>();
 
         StartCoroutine(UpdateFishState());
 
@@ -82,6 +86,13 @@ public class FishController : MonoBehaviour
             if (fishDepth < (startingFishDepth - 20))
             {
                 Debug.Log("Game Over!");
+            }
+
+            if (depthIndicator != null)
+            {
+                depthIndicator.UpdateProgress(fishDepth);
+            } else {
+                Debug.LogWarning("DepthIndicatorController is not assigned.");
             }
 
             yield return new WaitForSeconds(1f);
