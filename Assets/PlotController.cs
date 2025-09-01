@@ -48,6 +48,8 @@ public class PlotController : MonoBehaviour
     // Wave generation
     private int waveResolution = 200;
 
+    private List<RectTransform> beatDots = new List<RectTransform>();
+
     private void Start()
     {
         if (fishingRodController == null)
@@ -160,8 +162,7 @@ public class PlotController : MonoBehaviour
     {
         if (verticalLine == null) return;
 
-        // Set up vertical line at x=1
-        float xPos = PlotToLocalX(1f);
+        float xPos = PlotToLocalX(xStart);
         SetUILinePosition(verticalLine,
             new Vector2(xPos, -plotHeight / 2),
             new Vector2(xPos, plotHeight / 2),
@@ -230,7 +231,7 @@ public class PlotController : MonoBehaviour
     {
         if (dot == null) return;
 
-        float xPos = PlotToLocalX(1f);
+        float xPos = PlotToLocalX(xStart);
         float yPos = PlotToLocalY(yValue);
 
         dot.anchoredPosition = new Vector2(xPos, yPos);
@@ -313,7 +314,7 @@ public class PlotController : MonoBehaviour
 
         // Calculate the distance between the dot and the vertical line
         float dotPosition = fishingRodController.rodPosition;
-        float waveValue = GetSineWaveValue(1f);
+        float waveValue = GetSineWaveValue(xStart);
         float distance = Mathf.Abs(dotPosition - waveValue);
 
         if (distance < proximityThreshold1)
