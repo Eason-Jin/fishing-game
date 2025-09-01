@@ -4,50 +4,36 @@ using UnityEngine.UI;
 
 public class PlotController : MonoBehaviour
 {
-    [Header("Dependencies")]
     public FishingRodController fishingRodController;
     public RectTransform plotArea;
-
-    [Header("Settings")]
     public float proximityThreshold1 = 3.0f;
     public float proximityThreshold2 = 6.0f;
-
-    // Waveform control variables
-    public float flatDuration = 3f; // Duration of flat regions
-    public float slopeDuration = 1f; // Duration of sloped regions
-    public float scrollSpeed = 0.5f;
-
-    [Header("Plot Appearance")]
+    public float bpm = 120f;
+    public int beatsPerCycle = 8;
     public Color axisColor = Color.white;
     public Color waveColor = Color.cyan;
     public Color verticalLineColor = Color.red;
     public Color dotColor = Color.yellow;
     public float lineWidth = 10f;
     public float axisLineWidth = 5f;
-
     public DotStatus dotStatus;
 
-    // Private variables
     private float time = 0f;
+    private float xMax = 4f;
     private float yMax;
     private float yStart;
     private float xStart;
-
-    // Plot dimensions
+    private int beatOffset = 0; // Offset relative to wave resolution
     private float plotWidth;
     private float plotHeight;
-
-    // Component references (created programmatically)
     private GameObject waveformRenderer;
     private GameObject verticalLine;
     private RectTransform dot;
-
-    // Axis renderers
     private GameObject xAxisRenderer;
     private GameObject yAxisRenderer;
-
-    // Wave generation
-    private int waveResolution = 200;
+    private int waveResolution = 500;
+    private int firstRedPosition = -1;
+    private int secondRedPosition = -1;
 
     private void Start()
     {
@@ -62,6 +48,7 @@ public class PlotController : MonoBehaviour
         SetupVerticalLine();
         SetupDot();
         UpdateVerticalLineColor();
+        SetUpBeatMarkers();
     }
 
     private void Update()
@@ -78,7 +65,6 @@ public class PlotController : MonoBehaviour
         float panelHeight = plotArea.rect.height;
         plotWidth = plotArea.rect.width;
         plotHeight = plotArea.rect.height;
-
         yMax = fishingRodController.maxAngle;
         yStart = fishingRodController.rodPosition;
         xStart = 0.5f;
@@ -86,37 +72,22 @@ public class PlotController : MonoBehaviour
 
     private void CreatePlotComponents()
     {
-        // Create waveform using UI Image components
         waveformRenderer = CreateUILine("Waveform", Color.clear);
-
-        // Create vertical line using UI Image
         verticalLine = CreateUILine("VerticalLine", verticalLineColor);
-
-        // Create axis renderers as children of the plot area
         GameObject axisParent = new GameObject("Axes");
         axisParent.transform.SetParent(plotArea);
         axisParent.transform.localPosition = Vector3.zero;
         axisParent.transform.localScale = Vector3.one;
-
-        // X-Axis
         xAxisRenderer = CreateUILine("X-Axis", axisColor, axisParent.transform);
-
-        // Y-Axis
         yAxisRenderer = CreateUILine("Y-Axis", axisColor, axisParent.transform);
-
-        // Create dot
         GameObject dotObj = new GameObject("Dot");
         dotObj.transform.SetParent(plotArea);
         dotObj.transform.localPosition = Vector3.zero;
         dotObj.transform.localScale = Vector3.one;
         dot = dotObj.AddComponent<RectTransform>();
-
-        // Add Image component to dot
         Image dotImage = dotObj.AddComponent<Image>();
         dotImage.sprite = CreateCircleSprite();
         dotImage.color = dotColor;
-
-        // Set dot size
         dot.sizeDelta = new Vector2(10, 10);
 
         UpdateAxes();
@@ -139,20 +110,15 @@ public class PlotController : MonoBehaviour
 
     private void UpdateAxes()
     {
-        // Convert plot coordinates to local UI coordinates
         float xAxisY = PlotToLocalY(0);
         float yAxisX = PlotToLocalX(0);
-
-        // X-Axis (horizontal line)
         SetUILinePosition(xAxisRenderer,
             new Vector2(-plotWidth / 2, xAxisY),
-            new Vector2(plotWidth / 2 - 20, xAxisY),
+            new Vector2(plotWidth / 2, xAxisY),
             axisLineWidth);
-
-        // Y-Axis (vertical line)
         SetUILinePosition(yAxisRenderer,
-            new Vector2(yAxisX, -plotHeight / 2),
-            new Vector2(yAxisX, plotHeight / 2 - 20),
+            new Vector2(yAxisX, -plotHeight / 2 + 10),
+            new Vector2(yAxisX, plotHeight / 2),
             axisLineWidth);
     }
 
@@ -160,8 +126,7 @@ public class PlotController : MonoBehaviour
     {
         if (verticalLine == null) return;
 
-        // Set up vertical line at x=1
-        float xPos = PlotToLocalX(1f);
+        float xPos = PlotToLocalX(xStart);
         SetUILinePosition(verticalLine,
             new Vector2(xPos, -plotHeight / 2),
             new Vector2(xPos, plotHeight / 2),
@@ -175,30 +140,52 @@ public class PlotController : MonoBehaviour
         UpdateDotPosition(yStart);
     }
 
+    private void SetUpBeatMarkers()
+    {
+        for (int i = 0; i <= waveResolution; i++)
+        {
+            DrawBeatMarker(i);
+        }
+    }
+
     private void UpdateWaveform()
     {
         if (waveformRenderer == null) return;
 
-        // Clear existing waveform segments
         Transform waveformTransform = waveformRenderer.transform;
         for (int i = waveformTransform.childCount - 1; i >= 0; i--)
         {
             DestroyImmediate(waveformTransform.GetChild(i).gameObject);
         }
 
-        // Create waveform using multiple UI line segments
         List<Vector2> points = new List<Vector2>();
 
+        firstRedPosition = -1;
+        secondRedPosition = -1;
+        ClearAllBeatMarkers();
         for (int i = 0; i < waveResolution; i++)
         {
-            float xPlot = (float)i / (waveResolution - 1) * 4f;
-            float yPlot = GetSquareWaveValue(xPlot);
-
+            float xPlot = (float)i / (waveResolution - 1) * xMax;
+            float yPlot = GetSineWaveValue(xPlot);
+            findFirstTwoReds(i, yPlot);
             Vector2 localPos = new Vector2(PlotToLocalX(xPlot), PlotToLocalY(yPlot));
             points.Add(localPos);
         }
+        if (firstRedPosition != -1 && secondRedPosition != -1)
+        {
+            int interval = (int)Mathf.Round((secondRedPosition - firstRedPosition) / beatsPerCycle);
+            // Starting from firstRedPosition, go backwards in wave resolution and set red
+            for (int i = firstRedPosition; i >= 0; i -= interval)
+            {
+                SetBeatMarkerColour(i, Color.red);
+            }
+            // Starting from firstRedPosition, go forwards in wave resolution and set red
+            for (int i = firstRedPosition + interval; i < waveResolution; i += interval)
+            {
+                SetBeatMarkerColour(i, Color.red);
+            }
+        }
 
-        // Create line segments between consecutive points
         for (int i = 0; i < points.Count - 1; i++)
         {
             GameObject segment = new GameObject($"WaveSegment_{i}");
@@ -214,44 +201,19 @@ public class PlotController : MonoBehaviour
         }
     }
 
-    private float GetSquareWaveValue(float x)
+    private float GetSineWaveValue(float x)
     {
-        // Shift x leftward based on time, scroll speed
-        float shiftedX = x + xStart + time * scrollSpeed;
-
-        // Calculate square wave
-        float cycleDuration = flatDuration * 2 + slopeDuration * 2;
-        float cycleTime = (shiftedX % cycleDuration + cycleDuration) % cycleDuration;
-
-        if (cycleTime < flatDuration)
-        {
-            // First flat region (high)
-            return yMax;
-        }
-        else if (cycleTime < flatDuration + slopeDuration)
-        {
-            // Falling slope
-            float t = (cycleTime - flatDuration) / slopeDuration;
-            return Mathf.Lerp(yMax, 0, t);
-        }
-        else if (cycleTime < flatDuration * 2 + slopeDuration)
-        {
-            // Second flat region (low)
-            return 0;
-        }
-        else
-        {
-            // Rising slope
-            float t = (cycleTime - flatDuration * 2 - slopeDuration) / slopeDuration;
-            return Mathf.Lerp(0, yMax, t);
-        }
+        float cyclesPerSecond = bpm / 60f / beatsPerCycle;
+        float shiftedX = x + xStart + time * cyclesPerSecond;
+        float yValue = (Mathf.Sin(shiftedX * Mathf.PI * 2f) + 1f) * (yMax / 2f);
+        return yValue;
     }
 
     private void UpdateDotPosition(float yValue)
     {
         if (dot == null) return;
 
-        float xPos = PlotToLocalX(1f);
+        float xPos = PlotToLocalX(xStart);
         float yPos = PlotToLocalY(yValue);
 
         dot.anchoredPosition = new Vector2(xPos, yPos);
@@ -259,23 +221,17 @@ public class PlotController : MonoBehaviour
 
     private float PlotToLocalX(float plotX)
     {
-        // Convert plot X coordinate to local UI coordinate
-        // X range: 0 to 4, centered in plot area
-        return (plotX - 2f) * (plotWidth / 4f);
+        return (plotX - 2f) * (plotWidth / xMax);
     }
 
     private float PlotToLocalY(float plotY)
     {
-        // Convert plot Y coordinate to local UI coordinate
-        // Y range: yMin to yMax, centered in plot area
         float normalizedY = (plotY - yMax / 2f) / (yMax / 2f);
         return normalizedY * (plotHeight / 3f); // Use 2/3 of plot height for better visibility
     }
 
-    // Helper method to create a simple circle sprite
     private Sprite CreateCircleSprite()
     {
-        // Create a simple 32x32 white circle texture
         int size = 32;
         Texture2D texture = new Texture2D(size, size);
         Color[] colors = new Color[size * size];
@@ -307,7 +263,6 @@ public class PlotController : MonoBehaviour
         return Sprite.Create(texture, new Rect(0, 0, size, size), new Vector2(0.5f, 0.5f));
     }
 
-    // Helper method to position a UI line between two points
     private void SetUILinePosition(GameObject lineObj, Vector2 startPos, Vector2 endPos, float width)
     {
         RectTransform rectTransform = lineObj.GetComponent<RectTransform>();
@@ -317,12 +272,10 @@ public class PlotController : MonoBehaviour
         float distance = direction.magnitude;
         float angle = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg;
 
-        // Set the size and position
         rectTransform.sizeDelta = new Vector2(distance, width);
         rectTransform.anchoredPosition = (startPos + endPos) / 2f;
         rectTransform.rotation = Quaternion.AngleAxis(angle, Vector3.forward);
 
-        // Set anchor and pivot
         rectTransform.anchorMin = new Vector2(0.5f, 0.5f);
         rectTransform.anchorMax = new Vector2(0.5f, 0.5f);
         rectTransform.pivot = new Vector2(0.5f, 0.5f);
@@ -332,9 +285,8 @@ public class PlotController : MonoBehaviour
     {
         if (verticalLine == null || dot == null) return;
 
-        // Calculate the distance between the dot and the vertical line
         float dotPosition = fishingRodController.rodPosition;
-        float waveValue = GetSquareWaveValue(1f);
+        float waveValue = GetSineWaveValue(xStart);
         float distance = Mathf.Abs(dotPosition - waveValue);
 
         if (distance < proximityThreshold1)
@@ -351,6 +303,50 @@ public class PlotController : MonoBehaviour
         {
             verticalLine.GetComponent<Image>().color = Color.red;
             dotStatus = DotStatus.NotOnTheLine;
+        }
+    }
+
+    private void DrawBeatMarker(int i)
+    {
+        if (i <= 0 || i > waveResolution) return;
+        Transform plotTransform = plotArea.transform;
+        float xLocal = PlotToLocalX(xMax / waveResolution * i);
+
+        // Create a vertical line for the beat marker
+        GameObject beatMarker = CreateUILine($"BeatMarker_{i}", Color.clear);
+        SetUILinePosition(beatMarker,
+            new Vector2(xLocal, -plotHeight / 2 + 10),
+            new Vector2(xLocal, -plotHeight / 2 + 20),
+            axisLineWidth);
+    }
+
+    private void findFirstTwoReds(int i, float y)
+    {
+        if (y <= 0.01f)
+        {
+            if (firstRedPosition == -1)
+            {
+                firstRedPosition = i + beatOffset;
+            }
+            else if (secondRedPosition == -1 && i >= firstRedPosition + 5)
+            {
+                secondRedPosition = i + beatOffset;
+            }
+        }
+    }
+
+    private void SetBeatMarkerColour(int i, Color colour)
+    {
+        GameObject beatMarker = GameObject.Find($"BeatMarker_{i}");
+        if (beatMarker == null) return;
+        beatMarker.GetComponent<Image>().color = colour;
+    }
+
+    private void ClearAllBeatMarkers()
+    {
+        for (int i = 0; i <= waveResolution; i++)
+        {
+            SetBeatMarkerColour(i, Color.clear);
         }
     }
 }
