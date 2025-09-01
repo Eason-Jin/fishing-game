@@ -13,9 +13,8 @@ public class PlotController : MonoBehaviour
     public float proximityThreshold2 = 6.0f;
 
     // Waveform control variables
-    public float flatDuration = 3f; // Duration of flat regions
-    public float slopeDuration = 1f; // Duration of sloped regions
-    public float scrollSpeed = 0.5f;
+    public float bpm = 120f;
+    public int beatsPerCycle = 8;
 
     [Header("Plot Appearance")]
     public Color axisColor = Color.white;
@@ -79,6 +78,7 @@ public class PlotController : MonoBehaviour
         plotWidth = plotArea.rect.width;
         plotHeight = plotArea.rect.height;
 
+        Debug.Log(fishingRodController.maxAngle);
         yMax = fishingRodController.maxAngle;
         yStart = fishingRodController.rodPosition;
         xStart = 0.5f;
@@ -192,7 +192,7 @@ public class PlotController : MonoBehaviour
         for (int i = 0; i < waveResolution; i++)
         {
             float xPlot = (float)i / (waveResolution - 1) * 4f;
-            float yPlot = GetSquareWaveValue(xPlot);
+            float yPlot = GetSineWaveValue(xPlot);
 
             Vector2 localPos = new Vector2(PlotToLocalX(xPlot), PlotToLocalY(yPlot));
             points.Add(localPos);
@@ -214,37 +214,16 @@ public class PlotController : MonoBehaviour
         }
     }
 
-    private float GetSquareWaveValue(float x)
+    private float GetSineWaveValue(float x)
     {
-        // Shift x leftward based on time, scroll speed
-        float shiftedX = x + xStart + time * scrollSpeed;
+        // Calculate the scroll speed based on bpm and beatsPerCycle
+        float cyclesPerSecond = bpm / 60f / beatsPerCycle; // Convert bpm to cycles per second, adjusted by beatsPerCycle
 
-        // Calculate square wave
-        float cycleDuration = flatDuration * 2 + slopeDuration * 2;
-        float cycleTime = (shiftedX % cycleDuration + cycleDuration) % cycleDuration;
+        // Shift x leftward based on time and cyclesPerSecond
+        float shiftedX = x + xStart + time * cyclesPerSecond;
 
-        if (cycleTime < flatDuration)
-        {
-            // First flat region (high)
-            return yMax;
-        }
-        else if (cycleTime < flatDuration + slopeDuration)
-        {
-            // Falling slope
-            float t = (cycleTime - flatDuration) / slopeDuration;
-            return Mathf.Lerp(yMax, 0, t);
-        }
-        else if (cycleTime < flatDuration * 2 + slopeDuration)
-        {
-            // Second flat region (low)
-            return 0;
-        }
-        else
-        {
-            // Rising slope
-            float t = (cycleTime - flatDuration * 2 - slopeDuration) / slopeDuration;
-            return Mathf.Lerp(0, yMax, t);
-        }
+        // Calculate sine wave value, centered at yMax / 2 and ranging between 0 and yMax
+        return (Mathf.Sin(shiftedX * Mathf.PI * 2f) + 1f) * (yMax / 2f);
     }
 
     private void UpdateDotPosition(float yValue)
@@ -334,7 +313,7 @@ public class PlotController : MonoBehaviour
 
         // Calculate the distance between the dot and the vertical line
         float dotPosition = fishingRodController.rodPosition;
-        float waveValue = GetSquareWaveValue(1f);
+        float waveValue = GetSineWaveValue(1f);
         float distance = Mathf.Abs(dotPosition - waveValue);
 
         if (distance < proximityThreshold1)
