@@ -9,6 +9,7 @@ public class AudioController : MonoBehaviour
     [Header("Master Audio")]
     [Tooltip("Master volume level (0 - 100)")]
     public int volume = 30; // volume default set to 30% to not kill ears (0 - 100)
+    // NOTE: volume in public and shown in inspector for dev purposes. Later, we should make this private and adjustable in game with the SetVolume() method
 
     [Header("Audio Sources")]
     public AudioSource backgroundMusicSource;
