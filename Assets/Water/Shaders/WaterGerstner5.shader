@@ -37,11 +37,11 @@ Shader "BeatWeights/RealWater_Gerstner5"
 
     SubShader
     {
-        Tags { "Queue"="Geometry" "RenderType"="Opaque" }
+        Tags { "Queue"="Transparent" "RenderType"="Transparent" }
         LOD 300
 
         CGPROGRAM
-        #pragma surface surf Standard vertex:vert addshadow
+        #pragma surface surf Standard alpha:fade vertex:vert addshadow
         #pragma target 3.0
 
         struct Input
@@ -116,7 +116,7 @@ Shader "BeatWeights/RealWater_Gerstner5"
             o.Albedo     = col;
             o.Metallic   = 0.0;
             o.Smoothness = _Smoothness;
-            o.Alpha      = 1;
+            o.Alpha      = lerp(_DeepColor.a, _ShallowColor.a, fres);
         }
         ENDCG
     }
