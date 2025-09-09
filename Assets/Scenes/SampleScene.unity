@@ -911,9 +911,8 @@ MonoBehaviour:
   plotArea: {fileID: 1306040764}
   proximityThreshold1: 3
   proximityThreshold2: 6
-  flatDuration: 1
-  slopeDuration: 0.5
-  scrollSpeed: 0.25
+  bpm: 120
+  beatsPerCycle: 8
   axisColor: {r: 1, g: 1, b: 1, a: 1}
   waveColor: {r: 0, g: 1, b: 1, a: 1}
   verticalLineColor: {r: 1, g: 0, b: 0, a: 1}
@@ -1174,6 +1173,7 @@ GameObject:
   - component: {fileID: 963194228}
   - component: {fileID: 963194227}
   - component: {fileID: 963194226}
+  - component: {fileID: 963194229}
   m_Layer: 0
   m_Name: Main Camera
   m_TagString: MainCamera
@@ -1255,6 +1255,19 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &963194229
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 963194225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0559417c2f7343a4fb07597b45285a6f, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  mouseSensitivity: 1
 --- !u!1 &1041409929
 GameObject:
   m_ObjectHideFlags: 0
