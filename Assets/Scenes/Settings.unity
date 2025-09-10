@@ -1349,7 +1349,7 @@ GameObject:
   - component: {fileID: 1454434055}
   - component: {fileID: 1454434057}
   m_Layer: 5
-  m_Name: weightInputController
+  m_Name: weightController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
