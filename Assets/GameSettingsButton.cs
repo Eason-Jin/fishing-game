@@ -17,7 +17,7 @@ public class GameSettingsButton : MonoBehaviour
     void TaskOnClick()
     {
         Debug.Log("You have clicked the settings button!");
-        SceneManager.LoadScene("Settings");
+        SceneController.Instance.LoadScene("Settings");
     }
 
     // Update is called once per frame

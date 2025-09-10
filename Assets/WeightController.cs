@@ -22,7 +22,6 @@ public class WeightController : MonoBehaviour
     {
         PlayerPrefs.SetString(weightKey, weight);
         PlayerPrefs.Save();
-        Debug.Log("&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
         Debug.Log("Weight saved: " + weight);
     }
 
