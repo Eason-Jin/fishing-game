@@ -17,7 +17,7 @@ public class GameHomeButton : MonoBehaviour
     void TaskOnClick()
     {
         Debug.Log("You have clicked the home button!");
-        SceneManager.LoadScene("Home");
+        SceneController.Instance.LoadScene("Home");
     }
 
     // Update is called once per frame

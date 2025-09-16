@@ -4,10 +4,11 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
-public class PlayButton : MonoBehaviour
+public class BackButton : MonoBehaviour
 {
     public Button yourButton;
-
+    
+    // Start is called before the first frame update
     void Start()
     {
         Button btn = yourButton.GetComponent<Button>();
@@ -16,12 +17,13 @@ public class PlayButton : MonoBehaviour
 
     void TaskOnClick()
     {
-        Debug.Log("You have clicked the button!");
-        SceneController.Instance.LoadScene("SampleScene");
+        Debug.Log("You have clicked the home button!");
+        SceneController.Instance.LoadPreviousScene();
     }
 
     // Update is called once per frame
     void Update()
     {
+
     }
 }

@@ -7,7 +7,7 @@ public class FishController : MonoBehaviour
     public int startingFishDepth = -100;
 
     private DotStatus dotStatus;
-    private int score = 0;
+    private float score = 0;
     private int fishDepth;
 
     private GameObject fishInstance;
@@ -22,6 +22,7 @@ public class FishController : MonoBehaviour
 
     private DepthIndicatorController depthIndicator;
     private ScoreTimeController scoreTimeController;
+    private float weight;
 
     void Start()
     {
@@ -59,18 +60,19 @@ public class FishController : MonoBehaviour
 
     private System.Collections.IEnumerator UpdateFishState()
     {
+        weight = float.Parse(WeightController.Instance.GetWeight());
         while (true)
         {
             Debug.Log("Fish Depth: " + fishDepth + "; Score: " + score);
             dotStatus = plotController.dotStatus;
             if (dotStatus == DotStatus.OnTheLine)
             {
-                score += 5;
+                score += 5 * weight;
                 fishDepth += 5;
             }
             else if (dotStatus == DotStatus.CloseEnough)
             {
-                score += 3;
+                score += 3 * weight;
                 fishDepth += 3;
             }
             else if (dotStatus == DotStatus.NotOnTheLine)
@@ -80,7 +82,7 @@ public class FishController : MonoBehaviour
 
             if (fishDepth >= 0)
             {
-                score += 100;
+                score += 100 * weight;
                 fishDepth = startingFishDepth;
                 Debug.Log("Fish caught! Score: " + score);
             }

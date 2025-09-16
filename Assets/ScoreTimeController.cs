@@ -14,7 +14,7 @@ public class ScoreTimeController : MonoBehaviour
         
     }
 
-    public void UpdateScore(int score) {
+    public void UpdateScore(float score) {
         scoreText.text = "Score: " + score.ToString();
     }
 
