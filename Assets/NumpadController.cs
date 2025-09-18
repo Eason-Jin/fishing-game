@@ -3,7 +3,7 @@ using TMPro;
 
 public class NumpadController : MonoBehaviour
 {
-    public static WeightController Instance { get; private set; }
+    public static SettingsController Instance { get; private set; }
     [Header("References")]
     public GameObject numpadPanel;          // assign in Inspector
     public TMP_InputField targetInputField; // assign in Inspector
@@ -47,7 +47,7 @@ public class NumpadController : MonoBehaviour
 
     public void Enter()
     {
-        WeightController.Instance.SetWeight(targetInputField.text);
+        SettingsController.Instance.SetWeight(targetInputField.text);
         HideNumpad(""); // closes numpad
     }
 

@@ -1,8 +1,8 @@
 using UnityEngine;
 
-public class WeightController : MonoBehaviour
+public class SettingsController : MonoBehaviour
 {
-    public static WeightController Instance { get; private set; }
+    public static SettingsController Instance { get; private set; }
     private string weightKey = "PlayerWeight";
     private string volumeKey = "Volume";
 

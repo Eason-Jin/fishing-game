@@ -16,7 +16,7 @@ public class WeightChecker : MonoBehaviour
 
     void CheckWeight()
     {
-        string weight = WeightController.Instance.GetWeight();
+        string weight = SettingsController.Instance.GetWeight();
 
         if (string.IsNullOrEmpty(weight))
         {
