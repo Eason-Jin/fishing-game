@@ -3,7 +3,6 @@ using UnityEngine;
 public class FishController : MonoBehaviour
 {
     private bool isFishCaught = false;
-    private float flyOutTimer = 0f;
     private float flyOutDuration = 1f; // seconds
     private int flyOutDirection = 0; // -1 for left, 1 for right
 
@@ -98,7 +97,6 @@ public class FishController : MonoBehaviour
                 {
                     score += 100 * weight;
                     isFishCaught = true;
-                    flyOutTimer = 0f;
                     Debug.Log("Fish caught! Score: " + score);
                 }
 
