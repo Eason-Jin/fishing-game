@@ -29,7 +29,7 @@ public class FishingRodController : MonoBehaviour
 
     private void Update()
     {
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel");
+        float scrollInput = Input.GetAxis("Mouse ScrollWheel") * 2;
 
         if (scrollInput != 0)
         {

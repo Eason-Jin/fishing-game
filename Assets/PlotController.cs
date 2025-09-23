@@ -18,6 +18,8 @@ public class PlotController : MonoBehaviour
     public float axisLineWidth = 5f;
     public DotStatus dotStatus;
 
+    public bool isPaused = false;
+
     private float time = 0f;
     private float xMax = 4f;
     private float yMax;
@@ -53,8 +55,15 @@ public class PlotController : MonoBehaviour
 
     private void Update()
     {
-        time += Time.deltaTime;
+        if (isPaused)
+        {
+            // While paused, still update dot and vertical line color
+            UpdateDotPosition(fishingRodController.rodPosition);
+            UpdateVerticalLineColor();
+            return; // Skip waveform scrolling
+        }
 
+        time += Time.deltaTime;
         UpdateWaveform();
         UpdateDotPosition(fishingRodController.rodPosition);
         UpdateVerticalLineColor();
