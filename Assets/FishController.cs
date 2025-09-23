@@ -90,7 +90,11 @@ public class FishController : MonoBehaviour
                     fishDepth -= 1;
                 }
 
-                if (fishDepth >= 0)
+                // Only catch fish if depth >= 0 AND rod is near its highest position (peak)
+                float rodPosition = plotController.fishingRodController.rodPosition;
+                float rodMax = plotController.fishingRodController.maxAngle;
+                Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
+                if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f) // max rod position is 45 so 38 is near the top of the sine wave
                 {
                     score += 100 * weight;
                     isFishCaught = true;
@@ -123,7 +127,7 @@ public class FishController : MonoBehaviour
                 Debug.LogWarning("ScoreTimeController is not assigned.");
             }
 
-            yield return new WaitForSeconds(1f);
+            yield return new WaitForSeconds(0.5f);
         }
     }
 
