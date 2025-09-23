@@ -8,7 +8,7 @@ public class AudioController : MonoBehaviour
 
     [Header("Master Audio")]
     [Tooltip("Master volume level (0 - 100)")]
-    public int volume = 30; // volume default set to 30% to not kill ears (0 - 100)
+    //public int volume = 30; // volume default set to 30% to not kill ears (0 - 100)
     // NOTE: volume is public and shown in inspector for dev purposes. Later, we should make this private and adjustable in game with the SetVolume() method
 
     [Header("Audio Sources")]
@@ -23,7 +23,7 @@ public class AudioController : MonoBehaviour
 
     private void Start() {
         backgroundMusicSource.clip = background;
-        SetVolume(volume);
+        SetVolume(float.Parse(SettingsController.Instance.GetVolume()));
         backgroundMusicSource.loop = true;
         backgroundMusicSource.Play();
 
@@ -31,7 +31,7 @@ public class AudioController : MonoBehaviour
         gameAudioUi.UpdateAudioText(backgroundMusicSource.clip.name);
     }
 
-    public void SetVolume(int volume)
+    public void SetVolume(float volume)
     {
         float normalized = Mathf.Clamp(volume, 0, 100) / 100f;
         backgroundMusicSource.volume = normalized;
