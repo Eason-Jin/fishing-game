@@ -60,7 +60,7 @@ public class FishController : MonoBehaviour
 
     private System.Collections.IEnumerator UpdateFishState()
     {
-        weight = float.Parse(WeightController.Instance.GetWeight());
+        weight = float.Parse(SettingsController.Instance.GetWeight());
         while (true)
         {
             Debug.Log("Fish Depth: " + fishDepth + "; Score: " + score);
