@@ -3,7 +3,7 @@ using UnityEngine;
 public class FishController : MonoBehaviour
 {
     private bool isFishCaught = false;
-    private float flyOutDuration = 1f; // seconds
+    private float flyOutDuration = 0.8f; // seconds
     private int flyOutDirection = 0; // -1 for left, 1 for right
 
     public PlotController plotController;
@@ -16,7 +16,7 @@ public class FishController : MonoBehaviour
 
     private GameObject fishInstance;
 
-    private Vector3 fishSpawnLocation = new Vector3(0, -3, 12);
+    private Vector3 fishSpawnLocation = new Vector3(0, -3, 20);
     private float radius = 3f;           // size of the circle
     private float speed = 1f;            // how fast it moves
     private float squiggleAmplitude = 2f; // how wavy it is
@@ -141,11 +141,22 @@ public class FishController : MonoBehaviour
             if (pauseTimer < flyOutDuration)
             {
                 // Fish flying out of water animation
-                Vector3 flyOutPos = fishInstance.transform.position;
+                Vector3 prevPos = fishInstance.transform.position;
+                Vector3 flyOutPos = prevPos;
                 flyOutPos.y += 14f * Time.deltaTime; // Move up quickly
                 flyOutPos.x += flyOutDirection * 10f * Time.deltaTime; // Move sideways (right or left)
-                flyOutPos.z -= 15f * Time.deltaTime; // Move towards player (-z direction)
+                flyOutPos.z -= 30f * Time.deltaTime; // Move towards player (-z direction)
                 fishInstance.transform.position = flyOutPos;
+
+                // Face direction of movement
+                Vector3 velocity = flyOutPos - prevPos;
+                if (velocity.sqrMagnitude > 0.0001f)
+                {
+                    Quaternion moveRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
+                    // Oscillate only the fish's nose (yaw)
+                    float oscillation = Mathf.Sin(Time.time * 12f) * 30f; // frequency=12, amplitude=30 degrees
+                    fishInstance.transform.rotation = moveRotation * Quaternion.Euler(0, oscillation, 0);
+                }
             }
             else
             {
