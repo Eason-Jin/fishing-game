@@ -9,7 +9,7 @@ public class MusicDropdownController : MonoBehaviour
 
     void Start()
     {
-        /
+        
         if (musicDropdown == null || audioSource == null || musicClips.Length == 0)
         {
             Debug.LogError("请先在 Inspector 中设置 Dropdown、AudioSource 和音乐列表");
@@ -20,7 +20,7 @@ public class MusicDropdownController : MonoBehaviour
         musicDropdown.onValueChanged.AddListener(OnDropdownValueChanged);
     }
 
-    /
+    
     void OnDropdownValueChanged(int index)
     {
         if (index < 0 || index >= musicClips.Length) return;
