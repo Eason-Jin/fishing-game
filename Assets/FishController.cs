@@ -105,6 +105,26 @@ public class FishController : MonoBehaviour
                     Debug.Log("Game Over!");
                 }
             }
+            else
+            {
+                // Only update score, not fishDepth, while paused
+                if (dotStatus == DotStatus.OnTheLine)
+                {
+                    score += 5 * weight;
+                }
+                else if (dotStatus == DotStatus.CloseEnough)
+                {
+                    score += 3 * weight;
+                }
+                // No fishDepth changes while paused
+                float rodPosition = plotController.fishingRodController.rodPosition;
+                float rodMax = plotController.fishingRodController.maxAngle;
+                Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
+                if (fishDepth < (startingFishDepth - 20))
+                {
+                    Debug.Log("Game Over!");
+                }
+            }
 
             if (depthIndicator != null)
             {
@@ -133,10 +153,6 @@ public class FishController : MonoBehaviour
     {
         if (isPaused)
         {
-            // Pause the graph
-            if (plotController != null)
-                plotController.isPaused = true;
-
             pauseTimer += Time.deltaTime;
             if (pauseTimer < flyOutDuration)
             {
@@ -166,12 +182,8 @@ public class FishController : MonoBehaviour
                 fishDepth = startingFishDepth;
                 fishInstance.transform.position = fishSpawnLocation;
                 fishInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-
-                // Resume the graph
-                if (plotController != null)
-                    plotController.isPaused = false;
+                isFishCaught = false;
             }
-            return; // Skip normal update while paused
         }
 
         if (fishInstance != null)
@@ -185,7 +197,7 @@ public class FishController : MonoBehaviour
                 }
             }
 
-            if (!isFishCaught)
+            if (!isFishCaught && !isPaused)
             {
                 Vector3 previousPosition = fishInstance.transform.position;
                 timeCounter += Time.deltaTime * speed;
@@ -203,12 +215,11 @@ public class FishController : MonoBehaviour
                     fishInstance.transform.rotation = Quaternion.Slerp(fishInstance.transform.rotation, targetRotation, Time.deltaTime * 5f);
                 }
             }
-            else
+            if (isFishCaught && !isPaused)
             {
                 // Start pause and animation
                 isPaused = true;
                 pauseTimer = 0f;
-                isFishCaught = false;
                 // Randomly choose fly out direction: -1 (left) or 1 (right)
                 flyOutDirection = (Random.value < 0.5f) ? -1 : 1;
             }
