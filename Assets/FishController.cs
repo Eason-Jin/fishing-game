@@ -70,60 +70,40 @@ public class FishController : MonoBehaviour
         weight = float.Parse(SettingsController.Instance.GetWeight());
         while (true)
         {
-            Debug.Log("Fish Depth: " + fishDepth + "; Score: " + score);
+            Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");
             dotStatus = plotController.dotStatus;
-            if (!isPaused)
+
+            float rodPosition = plotController.fishingRodController.rodPosition;
+            float rodMax = plotController.fishingRodController.maxAngle;
+            Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
+
+            // Score logic
+            if (dotStatus == DotStatus.OnTheLine)
             {
-                if (dotStatus == DotStatus.OnTheLine)
-                {
-                    score += 5 * weight;
-                    fishDepth += 5;
-                }
-                else if (dotStatus == DotStatus.CloseEnough)
-                {
-                    score += 3 * weight;
-                    fishDepth += 3;
-                }
-                else if (dotStatus == DotStatus.NotOnTheLine)
-                {
-                    fishDepth -= 1;
-                }
-
-                // Only catch fish if depth >= 0 AND rod is near its highest position (peak)
-                float rodPosition = plotController.fishingRodController.rodPosition;
-                float rodMax = plotController.fishingRodController.maxAngle;
-                Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
-                if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f) // max rod position is 45 so 38 is near the top of the sine wave
-                {
-                    score += 100 * weight;
-                    isFishCaught = true;
-                    Debug.Log("Fish caught! Score: " + score);
-                }
-
-                if (fishDepth < (startingFishDepth - 20))
-                {
-                    Debug.Log("Game Over!");
-                }
+                score += 5 * weight;
+                if (!isPaused) fishDepth += 5;
             }
-            else
+            else if (dotStatus == DotStatus.CloseEnough)
             {
-                // Only update score, not fishDepth, while paused
-                if (dotStatus == DotStatus.OnTheLine)
-                {
-                    score += 5 * weight;
-                }
-                else if (dotStatus == DotStatus.CloseEnough)
-                {
-                    score += 3 * weight;
-                }
-                // No fishDepth changes while paused
-                float rodPosition = plotController.fishingRodController.rodPosition;
-                float rodMax = plotController.fishingRodController.maxAngle;
-                Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
-                if (fishDepth < (startingFishDepth - 20))
-                {
-                    Debug.Log("Game Over!");
-                }
+                score += 3 * weight;
+                if (!isPaused) fishDepth += 3;
+            }
+            else if (dotStatus == DotStatus.NotOnTheLine && !isPaused)
+            {
+                fishDepth -= 1;
+            }
+
+            // Only catch fish if depth >= 0 AND rod is near its highest position (peak)
+            if (!isPaused && fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
+            {
+                score += 100 * weight;
+                isFishCaught = true;
+                Debug.Log($"Fish caught! Score: {score}");
+            }
+
+            if (fishDepth < (startingFishDepth - 20))
+            {
+                Debug.Log("Game Over!");
             }
 
             if (depthIndicator != null)
@@ -151,80 +131,96 @@ public class FishController : MonoBehaviour
 
     private void Update()
     {
+        if (fishInstance == null)
+            return;
+
+        if (fishingLine == null)
+        {
+            fishingLine = FindObjectOfType<FishingLine>();
+            if (fishingLine != null)
+            {
+                fishingLine.SetFishTransform(fishInstance.transform);
+            }
+        }
+
         if (isPaused)
         {
-            pauseTimer += Time.deltaTime;
-            if (pauseTimer < flyOutDuration)
-            {
-                // Fish flying out of water animation
-                Vector3 prevPos = fishInstance.transform.position;
-                Vector3 flyOutPos = prevPos;
-                flyOutPos.y += 14f * Time.deltaTime; // Move up quickly
-                flyOutPos.x += flyOutDirection * 10f * Time.deltaTime; // Move sideways (right or left)
-                flyOutPos.z -= 30f * Time.deltaTime; // Move towards player (-z direction)
-                fishInstance.transform.position = flyOutPos;
-
-                // Face direction of movement
-                Vector3 velocity = flyOutPos - prevPos;
-                if (velocity.sqrMagnitude > 0.0001f)
-                {
-                    Quaternion moveRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
-                    // Oscillate only the fish's nose (yaw)
-                    float oscillation = Mathf.Sin(Time.time * 12f) * 30f; // frequency=12, amplitude=30 degrees
-                    fishInstance.transform.rotation = moveRotation * Quaternion.Euler(0, oscillation, 0);
-                }
-            }
-            else
-            {
-                // Reset only fish position and depth, NOT score
-                isPaused = false;
-                pauseTimer = 0f;
-                fishDepth = startingFishDepth;
-                fishInstance.transform.position = fishSpawnLocation;
-                fishInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
-                isFishCaught = false;
-            }
+            UpdateCaughtAnimation();
+            return;
         }
 
-        if (fishInstance != null)
+        if (isFishCaught)
         {
-            if (fishingLine == null)
-            {
-                fishingLine = FindObjectOfType<FishingLine>();
-                if (fishingLine != null)
-                {
-                    fishingLine.SetFishTransform(fishInstance.transform);
-                }
-            }
+            StartCaughtAnimation();
+            return;
+        }
 
-            if (!isFishCaught && !isPaused)
-            {
-                Vector3 previousPosition = fishInstance.transform.position;
-                timeCounter += Time.deltaTime * speed;
-                float x = fishSpawnLocation.x + Mathf.Cos(timeCounter) * radius;
-                float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
-                float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
-                float y = (fishDepth * 0.1f) - 2.5f;
-                Vector3 newPosition = new Vector3(x + offset, y, z + offset);
-                fishInstance.transform.position = newPosition;
+        UpdateFishMovement();
 
-                Vector3 direction = (newPosition - previousPosition).normalized;
-                if (direction != Vector3.zero)
-                {
-                    Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-                    fishInstance.transform.rotation = Quaternion.Slerp(fishInstance.transform.rotation, targetRotation, Time.deltaTime * 5f);
-                }
-            }
-            if (isFishCaught && !isPaused)
+    }
+
+    private void UpdateCaughtAnimation()
+    {
+        pauseTimer += Time.deltaTime;
+        if (pauseTimer < flyOutDuration)
+        {
+            // Fish flying out of water animation
+            Vector3 prevPos = fishInstance.transform.position;
+            Vector3 flyOutPos = prevPos;
+            flyOutPos.y += 14f * Time.deltaTime; // Move up quickly
+            flyOutPos.x += flyOutDirection * 10f * Time.deltaTime; // Move sideways (right or left)
+            flyOutPos.z -= 30f * Time.deltaTime; // Move towards player (-z direction)
+            fishInstance.transform.position = flyOutPos;
+
+            // Face direction of movement
+            Vector3 velocity = flyOutPos - prevPos;
+            if (velocity.sqrMagnitude > 0.0001f)
             {
-                // Start pause and animation
-                isPaused = true;
-                pauseTimer = 0f;
-                // Randomly choose fly out direction: -1 (left) or 1 (right)
-                flyOutDirection = (Random.value < 0.5f) ? -1 : 1;
+                Quaternion moveRotation = Quaternion.LookRotation(velocity.normalized, Vector3.up);
+                // Oscillate only the fish's nose (yaw)
+                float oscillation = Mathf.Sin(Time.time * 17f) * 35f; // frequency=17, amplitude=35 degrees
+                fishInstance.transform.rotation = moveRotation * Quaternion.Euler(0, oscillation, 0);
             }
+        }
+        else
+        {
+            // Reset only fish position and depth, NOT score
+            isPaused = false;
+            pauseTimer = 0f;
+            fishDepth = startingFishDepth;
+            fishInstance.transform.position = fishSpawnLocation;
+            fishInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
+            isFishCaught = false;
         }
     }
+
+    private void StartCaughtAnimation()
+    {
+        isPaused = true;
+        pauseTimer = 0f;
+        // Randomly choose fly out direction: -1 (left) or 1 (right)
+        flyOutDirection = (Random.value < 0.5f) ? -1 : 1;
+    }
+
+    private void UpdateFishMovement()
+    {
+        Vector3 previousPosition = fishInstance.transform.position;
+        timeCounter += Time.deltaTime * speed;
+        float x = fishSpawnLocation.x + Mathf.Cos(timeCounter) * radius;
+        float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
+        float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
+        float y = (fishDepth * 0.1f) - 2.5f;
+        Vector3 newPosition = new Vector3(x + offset, y, z + offset);
+        fishInstance.transform.position = newPosition;
+
+        Vector3 direction = (newPosition - previousPosition).normalized;
+        if (direction != Vector3.zero)
+        {
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            fishInstance.transform.rotation = Quaternion.Slerp(fishInstance.transform.rotation, targetRotation, Time.deltaTime * 5f);
+        }
+    }
+
     public GameObject GetFishInstance()
     {
         return fishInstance;
