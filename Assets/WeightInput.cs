@@ -11,7 +11,7 @@ public class WeightInput : MonoBehaviour
     void Start()
     {
         // preload saved weight into the input field
-        weightInputField.text = WeightController.Instance.GetWeight();
+        weightInputField.text = SettingsController.Instance.GetWeight();
 
         // attach SaveWeight to OnEndEdit
         weightInputField.onEndEdit.AddListener(delegate { SaveWeight(); });
@@ -19,7 +19,7 @@ public class WeightInput : MonoBehaviour
 
     void SaveWeight()
     {
-        WeightController.Instance.SetWeight(weightInputField.text);
+        SettingsController.Instance.SetWeight(weightInputField.text);
     }
 
     public string GetSavedWeight()
