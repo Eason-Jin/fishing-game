@@ -156,7 +156,6 @@ public class FishController : MonoBehaviour
             if (scoreTimeController != null)
             {
                 scoreTimeController.UpdateScore(score);
-                scoreTimeController.UpdateTime(Mathf.RoundToInt(Time.time));
             }
             else
             {

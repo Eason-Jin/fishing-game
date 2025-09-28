@@ -41,6 +41,15 @@ public class GameCountdownController : MonoBehaviour
             Debug.LogWarning("MusicButton not found in scene.");
         }
 
+        // Start the gameplay timer after countdown
+        ScoreTimeController scoreTimeController = FindObjectOfType<ScoreTimeController>();
+        if (scoreTimeController != null)
+        {
+            scoreTimeController.StartTimer();
+        } else {
+            Debug.LogWarning("ScoreTimeController not found in scene.");
+        }
+
         gameObject.transform.parent.gameObject.SetActive(false);
     }
 
