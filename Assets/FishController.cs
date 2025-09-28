@@ -50,7 +50,7 @@ public class FishController : MonoBehaviour
             //return;
         }
 
-        // spawn temporary fish instance and position
+        // spawn fish instance and position
         fishInstance = Instantiate(fishPrefab, fishSpawnLocation, Quaternion.identity);
         fishInstance.transform.localScale = new Vector3(0.5f, 0.5f, 0.5f);
 
@@ -63,11 +63,49 @@ public class FishController : MonoBehaviour
             fishingLine.SetRodTransform(rodController.GetFishingRodInstance().transform);
             fishingLine.SetFishTransform(fishInstance.transform);
         }
+
+        weight = float.Parse(SettingsController.Instance.GetWeight());
+
+        // fish models in fishSet
+        Transform smallFish = fishInstance.transform.Find("Fish2");
+        Transform medFish = fishInstance.transform.Find("Fish1");
+        Transform largeFish = fishInstance.transform.Find("Shark");
+
+        // set fish models 
+        smallFish.gameObject.SetActive(false);
+        medFish.gameObject.SetActive(false);
+        largeFish.gameObject.SetActive(false);
+
+        Vector3 fishLineOffset = Vector3.zero;
+        if (weight > 2 && weight <= 8)
+        {
+            medFish.gameObject.SetActive(true);
+            // Set offset for medium fish (adjust as needed)
+            fishLineOffset = new Vector3(0, 0, 1.2f);
+        }
+        else if (weight > 8)
+        {
+            largeFish.gameObject.SetActive(true);
+            // Set offset for large fish (adjust as needed)
+            fishLineOffset = new Vector3(0, 0, 5.0f);
+        }
+        else
+        {
+            smallFish.gameObject.SetActive(true);
+            // Set offset for small fish (adjust as needed)
+            fishLineOffset = new Vector3(0, 0, 0.5f);
+        }
+
+        // Set the fishing line to attach to the offset
+        if (fishingLine != null)
+        {
+            fishingLine.SetFishTransform(fishInstance.transform);
+            fishingLine.fishLocalOffset = fishLineOffset;
+        }
     }
 
     private System.Collections.IEnumerator UpdateFishState()
-    {
-        weight = float.Parse(SettingsController.Instance.GetWeight());
+    {    
         while (true)
         {
             Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");

@@ -2860,7 +2860,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   plotController: {fileID: 615646670}
-  fishPrefab: {fileID: 3447987514716299209, guid: c27454a698053c64a959a979de02afc5, type: 3}
+  fishPrefab: {fileID: 8216625945232776909, guid: 26e2105f373faf444959ecd983e75604, type: 3}
   startingFishDepth: -100
 --- !u!1 &1701087398
 GameObject:
