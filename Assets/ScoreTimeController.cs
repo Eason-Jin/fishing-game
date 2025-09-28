@@ -7,6 +7,7 @@ public class ScoreTimeController : MonoBehaviour
 {
     public TMP_Text scoreText;
     public TMP_Text timeText;
+    public TMP_Text fishCaughtText;
     private float gameplayTime = 0f;
     private bool timerRunning = false;
 
@@ -54,6 +55,12 @@ public class ScoreTimeController : MonoBehaviour
     {
         if (scoreText != null)
             scoreText.text = "Score: " + score.ToString();
+    }
+
+    public void UpdateFishCaught(int fishCaught)
+    {
+        if (fishCaughtText != null)
+            fishCaughtText.text = "Fish Caught: " + fishCaught.ToString();
     }
 
     private void OnDisable()

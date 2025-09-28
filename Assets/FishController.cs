@@ -31,6 +31,8 @@ public class FishController : MonoBehaviour
     private bool isPaused = false;
     private float pauseTimer = 0f;
 
+    private int fishCaughtCount = 0;
+
     void Start()
     {
         if (plotController != null)
@@ -136,6 +138,7 @@ public class FishController : MonoBehaviour
             {
                 score += 100 * weight;
                 isFishCaught = true;
+                fishCaughtCount++;
                 Debug.Log($"Fish caught! Score: {score}");
             }
 
@@ -156,6 +159,7 @@ public class FishController : MonoBehaviour
             if (scoreTimeController != null)
             {
                 scoreTimeController.UpdateScore(score);
+                scoreTimeController.UpdateFishCaught(fishCaughtCount);
             }
             else
             {
