@@ -651,7 +651,6 @@ MonoBehaviour:
   fishingRodPrefab: {fileID: 8661711431703123294, guid: e84920c8d7f216045928e28d6b187e84, type: 3}
   moveSpeed: 9
   maxAngle: 45
-  spawnLocation: {x: 0, y: 0, z: 0}
   rodPosition: 0
   fishingLine: {fileID: 0}
 --- !u!4 &194652233
