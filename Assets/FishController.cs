@@ -67,7 +67,7 @@ public class FishController : MonoBehaviour
         weight = float.Parse(SettingsController.Instance.GetWeight());
 
         // fish models in fishSet
-        Transform smallFish = fishInstance.transform.Find("Fish2");
+        Transform smallFish = fishInstance.transform.Find("Fish3");
         Transform medFish = fishInstance.transform.Find("Fish1");
         Transform largeFish = fishInstance.transform.Find("Shark");
 
