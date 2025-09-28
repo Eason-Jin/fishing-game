@@ -22,7 +22,7 @@ public class GameCountdownController : MonoBehaviour
         float unscaledStart = Time.unscaledTime;
         while (countdownTime > 0)
         {
-            countdownText.text = $"Time Left: {countdownTime:F1}";
+            countdownText.text = $"{countdownTime:F1}";
             float unscaledNow = Time.unscaledTime;
             countdownTime = 5f - (unscaledNow - unscaledStart);
             yield return null;
