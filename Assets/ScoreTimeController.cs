@@ -29,4 +29,11 @@ public class ScoreTimeController : MonoBehaviour
     {
         
     }
+
+    private void OnDisable()
+    {
+        // Reset time display when exiting the scene
+        if (timeText != null)
+            timeText.text = "Time: 0:00";
+    }
 }

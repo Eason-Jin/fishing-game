@@ -16,9 +16,9 @@ public class GameCountdownController : MonoBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
+        Time.timeScale = 0f; // Pause the game
         float countdownTime = 5f; // 5 seconds countdown
         float prevTimeScale = Time.timeScale;
-        Time.timeScale = 0f; // Pause the game
         float unscaledStart = Time.unscaledTime;
         while (countdownTime > 0)
         {
@@ -27,13 +27,38 @@ public class GameCountdownController : MonoBehaviour
             countdownTime = 5f - (unscaledNow - unscaledStart);
             yield return null;
         }
-        Time.timeScale = prevTimeScale; // Resume the game
+
+        // Resume the game
+        Time.timeScale = prevTimeScale;
+
+        // Play music after countdown
+        MusicButton musicButton = FindObjectOfType<MusicButton>();
+        if (musicButton != null)
+        {
+            musicButton.PlayMusic();
+        } else
+        {
+            Debug.LogWarning("MusicButton not found in scene.");
+        }
+
         gameObject.transform.parent.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
     void Update()
     {
+        // Safety: If countdown UI is disabled early, always resume game
+        if (!gameObject.activeInHierarchy && Time.timeScale == 0f)
+        {
+            Time.timeScale = 1f;
+        }
         
+    }
+
+    private void OnDisable()
+    {
+        // Always resume game if this object is disabled (scene change, etc)
+        if (Time.timeScale == 0f)
+            Time.timeScale = 1f;
     }
 }
