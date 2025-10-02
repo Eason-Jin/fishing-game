@@ -10,11 +10,15 @@ public class FishingRodController : MonoBehaviour
     [Header("Settings")]
     public float moveSpeed = 9.0f;
     public float maxAngle = 45.0f;
-    private Vector3 spawnLocation = new Vector3(0, 0, 5);
+    private Vector3 spawnLocation = new Vector3(0, 0, 3);
 
     public float rodPosition;
 
     public FishingLine fishingLine;
+
+    public Transform leftController;
+    public Transform rightController;
+    private float baseHeight;
 
     private void Start()
     {
@@ -34,17 +38,34 @@ public class FishingRodController : MonoBehaviour
         rodAngle = 350f; // Start at bottom
         rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
         rodPosition = 0;
+
+        if (leftController != null && rightController != null)
+        {
+            baseHeight = (leftController.position.y + rightController.position.y) / 2f;
+        }
     }
 
     private void Update()
     {
-        float scrollInput = Input.GetAxis("Mouse ScrollWheel") * 2;
+        float heightInput = 0.0f;
+        float low = 350f - maxAngle;
+        float high = 350f;
+        if (leftController != null && rightController != null)
+        {
+            heightInput = ((leftController.position.y + rightController.position.y) / 2f - baseHeight) * 100.0f;
+            rodAngle = ScaleRange(heightInput, -30, -100, low, high);
+        }
+        else
+        {
+            heightInput = Input.GetAxis("Mouse ScrollWheel") * 2;
+            rodAngle += heightInput * moveSpeed;
+            rodAngle = Mathf.Clamp(rodAngle, low, high);
+        }
 
-        if (scrollInput != 0 && rodPivot != null)
+        if (heightInput != 0 && rodPivot != null)
         {
             // Update rodAngle based on input
-            rodAngle += scrollInput * moveSpeed;
-            rodAngle = Mathf.Clamp(rodAngle, 350f - maxAngle, 350f);
+            Debug.Log(" Rod Angle: " + rodAngle);
             rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
             rodPosition = 350f - rodAngle;
         }
@@ -52,5 +73,10 @@ public class FishingRodController : MonoBehaviour
     public GameObject GetFishingRodInstance()
     {
         return rodInstance;
+    }
+
+    private float ScaleRange(float value, float fromMin, float fromMax, float toMin, float toMax)
+    {
+        return toMin + (value - fromMin) * (toMax - toMin) / (fromMax - fromMin);
     }
 }

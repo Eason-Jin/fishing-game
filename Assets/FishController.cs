@@ -105,15 +105,15 @@ public class FishController : MonoBehaviour
     }
 
     private System.Collections.IEnumerator UpdateFishState()
-    {    
+    {
         while (true)
         {
-            Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");
+            //Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");
             dotStatus = plotController.dotStatus;
 
             float rodPosition = plotController.fishingRodController.rodPosition;
             float rodMax = plotController.fishingRodController.maxAngle;
-            Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
+            //Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
 
             // Score logic
             if (dotStatus == DotStatus.OnTheLine)
@@ -136,7 +136,7 @@ public class FishController : MonoBehaviour
             {
                 score += 100 * weight;
                 isFishCaught = true;
-                Debug.Log($"Fish caught! Score: {score}");
+                //Debug.Log($"Fish caught! Score: {score}");
             }
 
             if (fishDepth < (startingFishDepth - 20))
