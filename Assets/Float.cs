@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Float : MonoBehaviour
 {
     public Transform[] objectsToFloat;  // Objects in this group
-    public float moveRange = 10f;      // How far they drift
-    public float moveSpeed = 0.3f;        // How fast they drift
+    private float moveRange = 0.5f;      // How far they drift
+    private float moveSpeed = 0.01f;        // How fast they drift
 
     private Vector3[] startPositions;
     private float noiseOffset;
@@ -31,7 +29,7 @@ public class Float : MonoBehaviour
 
         Vector3 offset = new Vector3(offsetX, offsetY, 0f) * moveRange;
 
-        // Apply same offset to every object in this controller’s group
+        // Apply same offset to every object in this controllerï¿½s group
         for (int i = 0; i < objectsToFloat.Length; i++)
         {
             objectsToFloat[i].position = startPositions[i] + offset;
