@@ -8,6 +8,9 @@ public class FishingLine : MonoBehaviour
     private LineRenderer lineRenderer;
     private Vector3 tipLocalOffset = new Vector3(0, 0, 3);
 
+    // Offset for where the line attaches to the fish (in local space)
+    public Vector3 fishLocalOffset = Vector3.zero;
+
     private void Start()
     {
         lineRenderer = gameObject.AddComponent<LineRenderer>();
@@ -21,15 +24,18 @@ public class FishingLine : MonoBehaviour
 
     private void Update()
     {
-        if (rodTransform == null || fishTransform == null) return;
+    if (rodTransform == null || fishTransform == null) return;
 
-        Vector3 tipPos = rodTransform.position
-                         + rodTransform.forward * tipLocalOffset.z
-                         + rodTransform.up * tipLocalOffset.y
-                         + rodTransform.right * tipLocalOffset.x;
+    Vector3 tipPos = rodTransform.position
+             + rodTransform.forward * tipLocalOffset.z
+             + rodTransform.up * tipLocalOffset.y
+             + rodTransform.right * tipLocalOffset.x;
 
-        lineRenderer.SetPosition(0, tipPos);
-        lineRenderer.SetPosition(1, fishTransform.position);
+    // Offset the fish end of the line
+    Vector3 fishPos = fishTransform.TransformPoint(fishLocalOffset);
+
+    lineRenderer.SetPosition(0, tipPos);
+    lineRenderer.SetPosition(1, fishPos);
     }
 
     public void SetRodTransform(Transform rod)

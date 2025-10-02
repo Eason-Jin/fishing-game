@@ -13,7 +13,7 @@ public class NewBehaviourScript : MonoBehaviour
     void Start()
     {
     // hide cursor and put in centre
-    Cursor.lockState = CursorLockMode.Locked;
+    //Cursor.lockState = CursorLockMode.Locked;
     startPosition = transform.position;
     }
 
