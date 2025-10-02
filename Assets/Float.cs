@@ -3,8 +3,8 @@ using UnityEngine;
 public class Float : MonoBehaviour
 {
     public Transform[] objectsToFloat;  // Objects in this group
-    public float moveRange = 0.5f;      // How far they drift
-    public float moveSpeed = 0.03f;        // How fast they drift
+    private float moveRange = 0.5f;      // How far they drift
+    private float moveSpeed = 0.3f;        // How fast they drift
 
     private Vector3[] startPositions;
     private float noiseOffset;
