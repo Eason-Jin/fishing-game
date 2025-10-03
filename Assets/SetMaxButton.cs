@@ -32,6 +32,7 @@ public class SetMaxButton : MonoBehaviour
             {
                 state = 2;
                 CalculateHeight();
+                state = 0;
             }
         }
     }
