@@ -1,29 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;        // Needed for InputField
-using TMPro;                // Needed if using TextMesh Pro
+using UnityEngine.UI;
 
 public class VolumeInput : MonoBehaviour
 {
-    public TMP_InputField volumeInputField;
+    public Slider volumeSlider;
+    public TMP_Text volumetDisplayText;
 
     void Start()
     {
-        // preload saved weight into the input field
-        volumeInputField.text = SettingsController.Instance.GetVolume();
+        volumeSlider.wholeNumbers = true;
 
-        // attach SaveWeight to OnEndEdit
-        volumeInputField.onEndEdit.AddListener(delegate { SaveVolume(); });
+        int savedVolume = PlayerPrefs.GetInt("Volume", 30);
+        volumeSlider.value = savedVolume;
+        volumetDisplayText.text = savedVolume.ToString();
+
+        volumeSlider.onValueChanged.AddListener(delegate { SaveVolume(); });
     }
 
     void SaveVolume()
     {
-        SettingsController.Instance.SetVolume(volumeInputField.text);
-    }
-
-    public string GetSavedVolume()
-    {
-        return PlayerPrefs.GetString("Volume", "0");
+        int weight = (int)volumeSlider.value;
+        PlayerPrefs.SetInt("Volume", weight);
+        volumetDisplayText.text = weight.ToString();
     }
 }
