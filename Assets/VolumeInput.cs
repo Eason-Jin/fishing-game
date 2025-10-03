@@ -20,8 +20,8 @@ public class VolumeInput : MonoBehaviour
 
     void SaveVolume()
     {
-        int weight = (int)volumeSlider.value;
-        PlayerPrefs.SetInt("Volume", weight);
-        volumetDisplayText.text = weight.ToString();
+        int volume = (int)volumeSlider.value;
+        PlayerPrefs.SetInt("Volume", volume);
+        volumetDisplayText.text = volume.ToString();
     }
 }
