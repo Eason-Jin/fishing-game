@@ -10,6 +10,8 @@ public class PlotController : MonoBehaviour
     public float proximityThreshold2 = 6.0f;
     public float bpm = 120f;
     public int beatsPerCycle = 8;
+    public int reps = 8;
+
     public Color axisColor = Color.white;
     public Color waveColor = Color.cyan;
     public Color verticalLineColor = Color.red;
