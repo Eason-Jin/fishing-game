@@ -18,7 +18,6 @@ public class FishingRodController : MonoBehaviour
 
     public Transform leftController;
     public Transform rightController;
-    private float baseHeight;
 
     private void Start()
     {
@@ -38,11 +37,6 @@ public class FishingRodController : MonoBehaviour
         rodAngle = 350f; // Start at bottom
         rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
         rodPosition = 0;
-
-        if (leftController != null && rightController != null)
-        {
-            baseHeight = (leftController.position.y + rightController.position.y) / 2f;
-        }
     }
 
     private void Update()
@@ -52,8 +46,10 @@ public class FishingRodController : MonoBehaviour
         float high = 350f;
         if (leftController != null && rightController != null)
         {
-            heightInput = ((leftController.position.y + rightController.position.y) / 2f - baseHeight) * 100.0f;
-            rodAngle = ScaleRange(heightInput, -30, -100, low, high);
+            heightInput = ((leftController.position.y + rightController.position.y) / 2f);
+            float lowRange = PlayerPrefs.GetFloat("MinHeight", 0f);
+            float highRange = PlayerPrefs.GetFloat("MaxHeight", 0f);
+            rodAngle = ScaleRange(heightInput, highRange, lowRange, low, high);
         }
         else
         {

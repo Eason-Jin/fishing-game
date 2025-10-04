@@ -11,17 +11,17 @@ public class VolumeInput : MonoBehaviour
     {
         volumeSlider.wholeNumbers = true;
 
-        int savedVolume = PlayerPrefs.GetInt("Volume", 30);
-        volumeSlider.value = savedVolume;
-        volumetDisplayText.text = savedVolume.ToString();
+        string savedVolume = PlayerPrefs.GetString("Volume", "30");
+        volumeSlider.value = float.Parse(savedVolume);
+        volumetDisplayText.text = savedVolume;
 
         volumeSlider.onValueChanged.AddListener(delegate { SaveVolume(); });
     }
 
     void SaveVolume()
     {
-        int volume = (int)volumeSlider.value;
-        PlayerPrefs.SetInt("Volume", volume);
-        volumetDisplayText.text = volume.ToString();
+        string volume = ((int)volumeSlider.value).ToString();
+        PlayerPrefs.SetString("Volume", volume);
+        volumetDisplayText.text = volume;
     }
 }

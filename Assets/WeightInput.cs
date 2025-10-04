@@ -11,17 +11,17 @@ public class WeightInput : MonoBehaviour
     {
         weightSlider.wholeNumbers = true;
 
-        int savedWeight = PlayerPrefs.GetInt("PlayerWeight", 5);
-        weightSlider.value = savedWeight;
-        weightDisplayText.text = savedWeight.ToString();
+        string savedWeight = PlayerPrefs.GetString("PlayerWeight", "");
+        weightSlider.value = float.Parse(savedWeight);
+        weightDisplayText.text = savedWeight;
 
         weightSlider.onValueChanged.AddListener(delegate { SaveWeight(); });
     }
 
     void SaveWeight()
     {
-        int weight = (int)weightSlider.value;
-        PlayerPrefs.SetInt("PlayerWeight", weight);
-        weightDisplayText.text = weight.ToString();
+        string weight = ((int)weightSlider.value).ToString();
+        PlayerPrefs.SetString("PlayerWeight", weight);
+        weightDisplayText.text = weight;
     }
 }
