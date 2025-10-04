@@ -20,6 +20,8 @@ public class PlotController : MonoBehaviour
     public float lineWidth = 10f;
     public float axisLineWidth = 5f;
     public DotStatus dotStatus;
+    public float targetY = 0f;
+    public int beatOffset = 0; // Offset relative to wave resolution
 
     public bool isPaused = false;
     public bool isFinished = false;
@@ -29,7 +31,6 @@ public class PlotController : MonoBehaviour
     private float yMax;
     private float yStart;
     private float xStart;
-    private int beatOffset = 0; // Offset relative to wave resolution
     private float plotWidth;
     private float plotHeight;
     private GameObject waveformRenderer;
@@ -43,7 +44,6 @@ public class PlotController : MonoBehaviour
 
     private int cyclesCompleted = 0; // Counter for completed cycles
     private float cycleDuration; // Duration of one cycle
-    private DataLogger dataLogger;
 
     private void Start()
     {
@@ -67,9 +67,6 @@ public class PlotController : MonoBehaviour
         SetUpBeatMarkers();
 
         cycleDuration = beatsPerCycle / (bpm / 60f); // Calculate cycle duration
-
-        string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
-        dataLogger = new DataLogger($"FishingGameLog_{timestamp}.csv");
     }
 
     private void Update()
@@ -102,15 +99,7 @@ public class PlotController : MonoBehaviour
         UpdateDotPosition(fishingRodController.rodPosition);
         UpdateVerticalLineColor();
 
-        dataLogger.LogData(time, GetSineWaveValue(xStart), fishingRodController.rodPosition, dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, beatOffset, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
-    }
-
-    private void OnDestroy()
-    {
-        if (dataLogger != null)
-        {
-            dataLogger.Save();
-        }
+        targetY = GetSineWaveValue(xStart);
     }
 
     private void InitializePlotParameters()
