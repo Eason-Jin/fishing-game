@@ -47,8 +47,8 @@ public class FishingRodController : MonoBehaviour
         if (leftController != null && rightController != null)
         {
             heightInput = ((leftController.position.y + rightController.position.y) / 2f);
-            float lowRange = PlayerPrefs.GetFloat("MinHeight", 0f);
-            float highRange = PlayerPrefs.GetFloat("MaxHeight", 0f);
+            float lowRange = PlayerPrefs.GetFloat("MinHeight");
+            float highRange = PlayerPrefs.GetFloat("MaxHeight");
             rodAngle = ScaleRange(heightInput, highRange, lowRange, low, high);
         }
         else

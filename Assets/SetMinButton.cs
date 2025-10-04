@@ -65,5 +65,6 @@ public class SetMinButton : MonoBehaviour
         float avgHeight = sum / iters;
         heightText.text = avgHeight.ToString("F2");
         PlayerPrefs.SetFloat("MinHeight", avgHeight);
+        PlayerPrefs.Save();
     }
 }

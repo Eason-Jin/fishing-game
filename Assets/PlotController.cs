@@ -71,6 +71,8 @@ public class PlotController : MonoBehaviour
 
     private void Update()
     {
+        if (!GlobalVariables.settingsComplete) return;
+
         if (isPaused || isFinished)
         {
             // While paused or finished, still update dot and vertical line color

@@ -65,5 +65,6 @@ public class SetMaxButton : MonoBehaviour
         float avgHeight = sum / iters;
         heightText.text = avgHeight.ToString("F2");
         PlayerPrefs.SetFloat("MaxHeight", avgHeight);
+        PlayerPrefs.Save();
     }
 }

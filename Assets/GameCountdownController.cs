@@ -10,7 +10,10 @@ public class GameCountdownController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(CountdownCoroutine());
+        if (GlobalVariables.settingsComplete)
+        {
+            StartCoroutine(CountdownCoroutine());
+        }
     }
 
     private IEnumerator CountdownCoroutine()
