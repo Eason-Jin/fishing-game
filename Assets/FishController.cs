@@ -118,16 +118,16 @@ public class FishController : MonoBehaviour
             if (dotStatus == DotStatus.OnTheLine)
             {
                 score += 5 * weight;
-                fishDepth += 5;
+                fishDepth += 10;
             }
             else if (dotStatus == DotStatus.CloseEnough)
             {
                 score += 3 * weight;
-                fishDepth += 3;
+                fishDepth += 5;
             }
             else if (dotStatus == DotStatus.NotOnTheLine)
             {
-                fishDepth -= 1;
+                fishDepth -= 5;
             }
 
             if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
@@ -162,7 +162,7 @@ public class FishController : MonoBehaviour
                 Debug.LogWarning("ScoreTimeController is not assigned.");
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1.0f);
         }
     }
 
@@ -205,7 +205,7 @@ public class FishController : MonoBehaviour
             Vector3 prevPos = fishInstance.transform.position;
             Vector3 flyOutPos = prevPos;
             flyOutPos.y += 14f * Time.deltaTime; // Move up quickly
-            flyOutPos.x += flyOutDirection * 10f * Time.deltaTime; // Move sideways (right or left)
+            flyOutPos.x += flyOutDirection * 5.0f * Time.deltaTime; // Move sideways (right or left)
             flyOutPos.z -= 30f * Time.deltaTime; // Move towards player (-z direction)
             fishInstance.transform.position = flyOutPos;
 
@@ -246,7 +246,7 @@ public class FishController : MonoBehaviour
         float x = fishSpawnLocation.x + Mathf.Cos(timeCounter) * radius;
         float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
         float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
-        float y = (fishDepth * 0.1f) - 2.5f;
+        float y = (fishDepth * 0.1f) - 10.0f;
         Vector3 newPosition = new Vector3(x + offset, y, z + offset);
         fishInstance.transform.position = newPosition;
 
