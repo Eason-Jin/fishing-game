@@ -11,7 +11,6 @@ public class FishController : MonoBehaviour
     public int startingFishDepth = -100;
 
     private DotStatus dotStatus;
-    private float score = 0;
     private int fishDepth;
 
     private GameObject fishInstance;
@@ -31,7 +30,8 @@ public class FishController : MonoBehaviour
     private bool isPaused = false;
     private float pauseTimer = 0f;
 
-    private int fishCaughtCount = 0;
+    public float score = 0;
+    public int fishCaughtCount = 0;
 
     void Start()
     {
@@ -107,43 +107,39 @@ public class FishController : MonoBehaviour
     }
 
     private System.Collections.IEnumerator UpdateFishState()
-    {    
-        while (true)
+    {
+        while (!plotController.isPaused && !plotController.isFinished)
         {
-            Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");
             dotStatus = plotController.dotStatus;
 
             float rodPosition = plotController.fishingRodController.rodPosition;
             float rodMax = plotController.fishingRodController.maxAngle;
-            Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
 
-            // Score logic
             if (dotStatus == DotStatus.OnTheLine)
             {
                 score += 5 * weight;
-                if (!isPaused) fishDepth += 5;
+                fishDepth += 10;
             }
             else if (dotStatus == DotStatus.CloseEnough)
             {
                 score += 3 * weight;
-                if (!isPaused) fishDepth += 3;
+                fishDepth += 5;
             }
-            else if (dotStatus == DotStatus.NotOnTheLine && !isPaused)
+            else if (dotStatus == DotStatus.NotOnTheLine)
             {
-                fishDepth -= 1;
+                fishDepth -= 5;
             }
 
-            // Only catch fish if depth >= 0 AND rod is near its highest position (peak)
-            if (!isPaused && fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
+            if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
             {
                 score += 100 * weight;
                 isFishCaught = true;
                 fishCaughtCount++;
-                Debug.Log($"Fish caught! Score: {score}");
             }
 
             if (fishDepth < (startingFishDepth - 20))
             {
+                plotController.isFinished = true;
                 Debug.Log("Game Over!");
             }
 
@@ -166,7 +162,7 @@ public class FishController : MonoBehaviour
                 Debug.LogWarning("ScoreTimeController is not assigned.");
             }
 
-            yield return new WaitForSeconds(0.5f);
+            yield return new WaitForSeconds(1.0f);
         }
     }
 
@@ -209,7 +205,7 @@ public class FishController : MonoBehaviour
             Vector3 prevPos = fishInstance.transform.position;
             Vector3 flyOutPos = prevPos;
             flyOutPos.y += 14f * Time.deltaTime; // Move up quickly
-            flyOutPos.x += flyOutDirection * 10f * Time.deltaTime; // Move sideways (right or left)
+            flyOutPos.x += flyOutDirection * 5.0f * Time.deltaTime; // Move sideways (right or left)
             flyOutPos.z -= 30f * Time.deltaTime; // Move towards player (-z direction)
             fishInstance.transform.position = flyOutPos;
 
@@ -250,7 +246,7 @@ public class FishController : MonoBehaviour
         float x = fishSpawnLocation.x + Mathf.Cos(timeCounter) * radius;
         float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
         float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
-        float y = (fishDepth * 0.1f) - 2.5f;
+        float y = (fishDepth * 0.1f) - 10.0f;
         Vector3 newPosition = new Vector3(x + offset, y, z + offset);
         fishInstance.transform.position = newPosition;
 

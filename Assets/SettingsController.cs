@@ -23,7 +23,6 @@ public class SettingsController : MonoBehaviour
     {
         PlayerPrefs.SetString(weightKey, weight);
         PlayerPrefs.Save();
-        Debug.Log("Weight saved: " + weight);
     }
 
     public string GetWeight()

@@ -1,29 +1,27 @@
-using System.Collections;
-using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
-using UnityEngine.UI;        // Needed for InputField
-using TMPro;                // Needed if using TextMesh Pro
+using UnityEngine.UI;
 
 public class WeightInput : MonoBehaviour
 {
-    public TMP_InputField weightInputField;
+    public Slider weightSlider;
+    public TMP_Text weightDisplayText;
 
     void Start()
     {
-        // preload saved weight into the input field
-        weightInputField.text = SettingsController.Instance.GetWeight();
+        weightSlider.wholeNumbers = true;
 
-        // attach SaveWeight to OnEndEdit
-        weightInputField.onEndEdit.AddListener(delegate { SaveWeight(); });
+        string savedWeight = PlayerPrefs.GetString("PlayerWeight", "");
+        weightSlider.value = float.Parse(savedWeight);
+        weightDisplayText.text = savedWeight;
+
+        weightSlider.onValueChanged.AddListener(delegate { SaveWeight(); });
     }
 
     void SaveWeight()
     {
-        SettingsController.Instance.SetWeight(weightInputField.text);
-    }
-
-    public string GetSavedWeight()
-    {
-        return PlayerPrefs.GetString("PlayerWeight", "0");
+        string weight = ((int)weightSlider.value).ToString();
+        PlayerPrefs.SetString("PlayerWeight", weight);
+        weightDisplayText.text = weight;
     }
 }

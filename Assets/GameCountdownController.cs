@@ -1,7 +1,6 @@
 using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
 using TMPro;
+using UnityEngine;
 
 public class GameCountdownController : MonoBehaviour
 {
@@ -11,7 +10,10 @@ public class GameCountdownController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        StartCoroutine(CountdownCoroutine());
+        if (GlobalVariables.settingsComplete)
+        {
+            StartCoroutine(CountdownCoroutine());
+        }
     }
 
     private IEnumerator CountdownCoroutine()
@@ -36,18 +38,10 @@ public class GameCountdownController : MonoBehaviour
         if (musicButton != null)
         {
             musicButton.PlayMusic();
-        } else
+        }
+        else
         {
             Debug.LogWarning("MusicButton not found in scene.");
-        }
-
-        // Start the gameplay timer after countdown
-        ScoreTimeController scoreTimeController = FindObjectOfType<ScoreTimeController>();
-        if (scoreTimeController != null)
-        {
-            scoreTimeController.StartTimer();
-        } else {
-            Debug.LogWarning("ScoreTimeController not found in scene.");
         }
 
         gameObject.transform.parent.gameObject.SetActive(false);
@@ -61,7 +55,7 @@ public class GameCountdownController : MonoBehaviour
         {
             Time.timeScale = 1f;
         }
-        
+
     }
 
     private void OnDisable()

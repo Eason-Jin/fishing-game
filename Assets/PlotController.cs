@@ -5,11 +5,14 @@ using UnityEngine.UI;
 public class PlotController : MonoBehaviour
 {
     public FishingRodController fishingRodController;
+    public FishController fishController;
     public RectTransform plotArea;
     public float proximityThreshold1 = 3.0f;
     public float proximityThreshold2 = 6.0f;
     public float bpm = 120f;
     public int beatsPerCycle = 8;
+    public int reps = 8;
+
     public Color axisColor = Color.white;
     public Color waveColor = Color.cyan;
     public Color verticalLineColor = Color.red;
@@ -17,15 +20,17 @@ public class PlotController : MonoBehaviour
     public float lineWidth = 10f;
     public float axisLineWidth = 5f;
     public DotStatus dotStatus;
+    public float targetY = 0f;
+    public int beatOffset = 0; // Offset relative to wave resolution
 
     public bool isPaused = false;
+    public bool isFinished = false;
 
     private float time = 0f;
     private float xMax = 4f;
     private float yMax;
     private float yStart;
     private float xStart;
-    private int beatOffset = 0; // Offset relative to wave resolution
     private float plotWidth;
     private float plotHeight;
     private GameObject waveformRenderer;
@@ -37,11 +42,20 @@ public class PlotController : MonoBehaviour
     private int firstRedPosition = -1;
     private int secondRedPosition = -1;
 
+    private int cyclesCompleted = 0; // Counter for completed cycles
+    private float cycleDuration; // Duration of one cycle
+
     private void Start()
     {
         if (fishingRodController == null)
         {
             Debug.LogError("FishingRodController is not assigned.");
+            return;
+        }
+
+        if (fishController == null)
+        {
+            Debug.LogError("FishController is not assigned.");
             return;
         }
 
@@ -51,22 +65,43 @@ public class PlotController : MonoBehaviour
         SetupDot();
         UpdateVerticalLineColor();
         SetUpBeatMarkers();
+
+        cycleDuration = beatsPerCycle / (bpm / 60f); // Calculate cycle duration
     }
 
     private void Update()
     {
-        if (isPaused)
+        if (!GlobalVariables.settingsComplete) return;
+
+        if (isPaused || isFinished)
         {
-            // While paused, still update dot and vertical line color
+            // While paused or finished, still update dot and vertical line color
             UpdateDotPosition(fishingRodController.rodPosition);
             UpdateVerticalLineColor();
             return; // Skip waveform scrolling
         }
 
         time += Time.deltaTime;
+
+        // Check if a cycle is completed
+        if (time >= cycleDuration)
+        {
+            cyclesCompleted++;
+            time -= cycleDuration;
+
+            if (cyclesCompleted >= reps)
+            {
+                isFinished = true;
+                isPaused = true;
+                return;
+            }
+        }
+
         UpdateWaveform();
         UpdateDotPosition(fishingRodController.rodPosition);
         UpdateVerticalLineColor();
+
+        targetY = GetSineWaveValue(xStart);
     }
 
     private void InitializePlotParameters()
@@ -213,7 +248,7 @@ public class PlotController : MonoBehaviour
     private float GetSineWaveValue(float x)
     {
         float cyclesPerSecond = bpm / 60f / beatsPerCycle;
-        float shiftedX = x + xStart + time * cyclesPerSecond;
+        float shiftedX = x + xStart / 2 + time * cyclesPerSecond;
         float yValue = (Mathf.Sin(shiftedX * Mathf.PI * 2f) + 1f) * (yMax / 2f);
         return yValue;
     }
