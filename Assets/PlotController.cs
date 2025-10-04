@@ -228,7 +228,7 @@ public class PlotController : MonoBehaviour
     private float GetSineWaveValue(float x)
     {
         float cyclesPerSecond = bpm / 60f / beatsPerCycle;
-        float shiftedX = x + xStart + time * cyclesPerSecond;
+        float shiftedX = x + xStart / 2 + time * cyclesPerSecond;
         float yValue = (Mathf.Sin(shiftedX * Mathf.PI * 2f) + 1f) * (yMax / 2f);
         return yValue;
     }
