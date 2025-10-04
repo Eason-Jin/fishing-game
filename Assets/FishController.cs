@@ -108,42 +108,38 @@ public class FishController : MonoBehaviour
 
     private System.Collections.IEnumerator UpdateFishState()
     {
-        while (true)
+        while (!plotController.isPaused && !plotController.isFinished)
         {
-            //Debug.Log($"Fish Depth: {fishDepth}; Score: {score}");
             dotStatus = plotController.dotStatus;
 
             float rodPosition = plotController.fishingRodController.rodPosition;
             float rodMax = plotController.fishingRodController.maxAngle;
-            //Debug.Log($"[FishState] Rod Position: {rodPosition:F2} / {rodMax} (dot status: {dotStatus})");
 
-            // Score logic
             if (dotStatus == DotStatus.OnTheLine)
             {
                 score += 5 * weight;
-                if (!isPaused) fishDepth += 5;
+                fishDepth += 5;
             }
             else if (dotStatus == DotStatus.CloseEnough)
             {
                 score += 3 * weight;
-                if (!isPaused) fishDepth += 3;
+                fishDepth += 3;
             }
-            else if (dotStatus == DotStatus.NotOnTheLine && !isPaused)
+            else if (dotStatus == DotStatus.NotOnTheLine)
             {
                 fishDepth -= 1;
             }
 
-            // Only catch fish if depth >= 0 AND rod is near its highest position (peak)
-            if (!isPaused && fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
+            if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
             {
                 score += 100 * weight;
                 isFishCaught = true;
                 fishCaughtCount++;
-                // Debug.Log($"Fish caught! Score: {score}");
             }
 
             if (fishDepth < (startingFishDepth - 20))
             {
+                plotController.isFinished = true;
                 Debug.Log("Game Over!");
             }
 

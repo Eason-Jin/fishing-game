@@ -10,7 +10,7 @@ public class PlotController : MonoBehaviour
     public float proximityThreshold2 = 6.0f;
     public float bpm = 120f;
     public int beatsPerCycle = 8;
-    //public int reps = 8;
+    public int reps = 8;
 
     public Color axisColor = Color.white;
     public Color waveColor = Color.cyan;
@@ -21,7 +21,7 @@ public class PlotController : MonoBehaviour
     public DotStatus dotStatus;
 
     public bool isPaused = false;
-    //public bool isFinished = false;
+    public bool isFinished = false;
 
     private float time = 0f;
     private float xMax = 4f;
@@ -39,7 +39,9 @@ public class PlotController : MonoBehaviour
     private int waveResolution = 500;
     private int firstRedPosition = -1;
     private int secondRedPosition = -1;
-    //private int waveCyclesPassed = 0; // Counter for wave cycles
+
+    private int cyclesCompleted = 0; // Counter for completed cycles
+    private float cycleDuration; // Duration of one cycle
 
     private void Start()
     {
@@ -55,19 +57,36 @@ public class PlotController : MonoBehaviour
         SetupDot();
         UpdateVerticalLineColor();
         SetUpBeatMarkers();
+
+        cycleDuration = beatsPerCycle / (bpm / 60f); // Calculate cycle duration
     }
 
     private void Update()
     {
-        if (isPaused)
+        if (isPaused || isFinished)
         {
-            // While paused, still update dot and vertical line color
+            // While paused or finished, still update dot and vertical line color
             UpdateDotPosition(fishingRodController.rodPosition);
             UpdateVerticalLineColor();
             return; // Skip waveform scrolling
         }
 
         time += Time.deltaTime;
+
+        // Check if a cycle is completed
+        if (time >= cycleDuration)
+        {
+            cyclesCompleted++;
+            time -= cycleDuration;
+
+            if (cyclesCompleted >= reps)
+            {
+                isFinished = true;
+                isPaused = true;
+                return;
+            }
+        }
+
         UpdateWaveform();
         UpdateDotPosition(fishingRodController.rodPosition);
         UpdateVerticalLineColor();
@@ -183,17 +202,6 @@ public class PlotController : MonoBehaviour
             findFirstTwoReds(i, yPlot);
             Vector2 localPos = new Vector2(PlotToLocalX(xPlot), PlotToLocalY(yPlot));
             points.Add(localPos);
-
-            // Check if the wave crosses the vertical detection line
-            //if (i > 0 && points[i - 1].x < PlotToLocalX(xStart) && points[i].x >= PlotToLocalX(xStart))
-            //{
-            //    waveCyclesPassed++;
-            //    if (waveCyclesPassed >= reps)
-            //    {
-            //        isPaused = true;
-            //        isFinished = true;
-            //    }
-            //}
         }
         if (firstRedPosition != -1 && secondRedPosition != -1)
         {
