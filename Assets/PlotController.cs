@@ -5,6 +5,7 @@ using UnityEngine.UI;
 public class PlotController : MonoBehaviour
 {
     public FishingRodController fishingRodController;
+    public FishController fishController;
     public RectTransform plotArea;
     public float proximityThreshold1 = 3.0f;
     public float proximityThreshold2 = 6.0f;
@@ -42,12 +43,19 @@ public class PlotController : MonoBehaviour
 
     private int cyclesCompleted = 0; // Counter for completed cycles
     private float cycleDuration; // Duration of one cycle
+    private DataLogger dataLogger;
 
     private void Start()
     {
         if (fishingRodController == null)
         {
             Debug.LogError("FishingRodController is not assigned.");
+            return;
+        }
+
+        if (fishController == null)
+        {
+            Debug.LogError("FishController is not assigned.");
             return;
         }
 
@@ -59,6 +67,9 @@ public class PlotController : MonoBehaviour
         SetUpBeatMarkers();
 
         cycleDuration = beatsPerCycle / (bpm / 60f); // Calculate cycle duration
+
+        string timestamp = System.DateTime.Now.ToString("yyyy-MM-dd_HH-mm-ss");
+        dataLogger = new DataLogger($"FishingGameLog_{timestamp}.csv");
     }
 
     private void Update()
@@ -90,6 +101,16 @@ public class PlotController : MonoBehaviour
         UpdateWaveform();
         UpdateDotPosition(fishingRodController.rodPosition);
         UpdateVerticalLineColor();
+
+        dataLogger.LogData(time, GetSineWaveValue(xStart), fishingRodController.rodPosition, dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, beatOffset, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
+    }
+
+    private void OnDestroy()
+    {
+        if (dataLogger != null)
+        {
+            dataLogger.Save();
+        }
     }
 
     private void InitializePlotParameters()

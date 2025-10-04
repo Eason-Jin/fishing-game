@@ -11,7 +11,6 @@ public class FishController : MonoBehaviour
     public int startingFishDepth = -100;
 
     private DotStatus dotStatus;
-    private float score = 0;
     private int fishDepth;
 
     private GameObject fishInstance;
@@ -31,7 +30,8 @@ public class FishController : MonoBehaviour
     private bool isPaused = false;
     private float pauseTimer = 0f;
 
-    private int fishCaughtCount = 0;
+    public float score = 0;
+    public int fishCaughtCount = 0;
 
     void Start()
     {
