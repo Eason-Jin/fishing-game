@@ -6,7 +6,7 @@ public class FishingLine : MonoBehaviour
     private Transform fishTransform;
 
     private LineRenderer lineRenderer;
-    private Vector3 tipLocalOffset = new Vector3(0, 0, 3);
+    private Vector3 tipLocalOffset = new Vector3(0, 0, 4.5f);
 
     // Offset for where the line attaches to the fish (in local space)
     public Vector3 fishLocalOffset = Vector3.zero;
