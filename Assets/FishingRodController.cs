@@ -3,7 +3,7 @@ using UnityEngine;
 public class FishingRodController : MonoBehaviour
 {
     [Header("Feature Flags")]
-    public bool useXRInput = false; // If false, use scroll wheel input
+    public bool useXRInput = true; // If false, use scroll wheel input
     [Header("GameObject")]
     public GameObject fishingRodPrefab;
     private GameObject rodInstance;
