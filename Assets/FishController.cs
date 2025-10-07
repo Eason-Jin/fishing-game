@@ -130,7 +130,7 @@ public class FishController : MonoBehaviour
                 fishDepth -= 5;
             }
 
-            if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 38f)
+            if (fishDepth >= 0 && dotStatus == DotStatus.OnTheLine && rodPosition >= 35f)
             {
                 score += 100 * weight;
                 isFishCaught = true;
@@ -246,7 +246,12 @@ public class FishController : MonoBehaviour
         float x = fishSpawnLocation.x + Mathf.Cos(timeCounter) * radius;
         float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
         float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
-        float y = (fishDepth * 0.1f) - 10.0f;
+        float y = (fishDepth * 0.1f) - 4.0f;
+        Debug.Log("Fish Depth: " + fishDepth + " Y Position: " + y);
+        if (y >= -2.5f)
+        {
+            y = -2.5f; // cap max height
+        }
         Vector3 newPosition = new Vector3(x + offset, y, z + offset);
         fishInstance.transform.position = newPosition;
 
