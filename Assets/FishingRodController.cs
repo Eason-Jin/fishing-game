@@ -2,6 +2,8 @@ using UnityEngine;
 
 public class FishingRodController : MonoBehaviour
 {
+    [Header("Feature Flags")]
+    public bool useXRInput = true; // If false, use scroll wheel input
     [Header("GameObject")]
     public GameObject fishingRodPrefab;
     private GameObject rodInstance;
@@ -10,7 +12,7 @@ public class FishingRodController : MonoBehaviour
     [Header("Settings")]
     public float moveSpeed = 9.0f;
     public float maxAngle = 45.0f;
-    private Vector3 spawnLocation = new Vector3(0, 0, 3);
+    private Vector3 spawnLocation = new Vector3(0, 1, 1);
 
     public float rodPosition;
 
@@ -41,29 +43,34 @@ public class FishingRodController : MonoBehaviour
 
     private void Update()
     {
-        float heightInput = 0.0f;
         float low = 350f - maxAngle;
         float high = 350f;
-        if (leftController != null && rightController != null)
+
+        if (useXRInput && leftController != null && rightController != null)
         {
-            heightInput = ((leftController.position.y + rightController.position.y) / 2f);
+            float heightInput = ((leftController.position.y + rightController.position.y) / 2f);
             float lowRange = PlayerPrefs.GetFloat("MinHeight");
             float highRange = PlayerPrefs.GetFloat("MaxHeight");
             rodAngle = ScaleRange(heightInput, highRange, lowRange, low, high);
+            if (!float.IsNaN(rodAngle) && !float.IsInfinity(rodAngle) && rodPivot != null)
+            {
+                rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
+                rodPosition = 350f - rodAngle;
+            }
         }
         else
         {
-            heightInput = Input.GetAxis("Mouse ScrollWheel") * 2;
-            rodAngle += heightInput * moveSpeed;
-            rodAngle = Mathf.Clamp(rodAngle, low, high);
-        }
-
-        if (heightInput != 0 && rodPivot != null)
-        {
-            // Update rodAngle based on input
-            Debug.Log(" Rod Angle: " + rodAngle);
-            rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
-            rodPosition = 350f - rodAngle;
+            float scrollInput = Input.GetAxis("Mouse ScrollWheel") * 2;
+            if (scrollInput != 0 && rodPivot != null)
+            {
+                rodAngle += scrollInput * moveSpeed;
+                rodAngle = Mathf.Clamp(rodAngle, low, high);
+                if (!float.IsNaN(rodAngle) && !float.IsInfinity(rodAngle))
+                {
+                    rodPivot.transform.localEulerAngles = new Vector3(rodAngle, rodPivot.transform.localEulerAngles.y, rodPivot.transform.localEulerAngles.z);
+                    rodPosition = 350f - rodAngle;
+                }
+            }
         }
     }
     public GameObject GetFishingRodInstance()
