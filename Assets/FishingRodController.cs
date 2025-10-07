@@ -12,7 +12,7 @@ public class FishingRodController : MonoBehaviour
     [Header("Settings")]
     public float moveSpeed = 9.0f;
     public float maxAngle = 45.0f;
-    private Vector3 spawnLocation = new Vector3(0, 1, 1);
+    private Vector3 spawnLocation = new Vector3(0, 0.2f, -2.4f);
 
     public float rodPosition;
 
