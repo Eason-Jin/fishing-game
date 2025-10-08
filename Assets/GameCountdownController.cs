@@ -18,7 +18,7 @@ public class GameCountdownController : MonoBehaviour
 
     private IEnumerator CountdownCoroutine()
     {
-        Time.timeScale = 0f; // Pause the game
+        // Time.timeScale = 0f; // Pause the game
         float countdownTime = 5f; // 5 seconds countdown
         float prevTimeScale = Time.timeScale;
         float unscaledStart = Time.unscaledTime;

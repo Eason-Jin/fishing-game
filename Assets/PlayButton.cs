@@ -16,6 +16,7 @@ public class PlayButton : MonoBehaviour
 
     void TaskOnClick()
     {
+        Time.timeScale = 0f; // Pause the game
         Debug.Log("You have clicked the button!");
         SceneController.Instance.LoadScene("SampleScene");
     }
