@@ -12,7 +12,7 @@ public class GameCountdownController : MonoBehaviour
     private Coroutine interSetPauseCoroutine;
 
     private int setsCompleted = 0;
-    public int setsToPlay = 3;
+    private int setsToPlay = 3;
 
     // Start is called before the first frame update
     void Start()
@@ -102,6 +102,7 @@ public class GameCountdownController : MonoBehaviour
         // Show countdown UI
         if (countdownText != null)
         {
+            messageText.text = "Resting period. Game restarting in:";
             countdownText.gameObject.SetActive(true);
         }
 
