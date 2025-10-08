@@ -25,6 +25,7 @@ public class PlotController : MonoBehaviour
 
     public bool isPaused = false;
     public bool isFinished = false;
+    public bool isInterSetPauseActive = false;
 
     private float time = 0f;
     private float xMax = 4f;
@@ -41,9 +42,11 @@ public class PlotController : MonoBehaviour
     private int waveResolution = 500;
     private int firstRedPosition = -1;
     private int secondRedPosition = -1;
+    private int setsCompleted = 0;
 
     private int cyclesCompleted = 0; // Counter for completed cycles
     private float cycleDuration; // Duration of one cycle
+    private GameCountdownController countdownController;
 
     private void Start()
     {
@@ -59,6 +62,12 @@ public class PlotController : MonoBehaviour
             return;
         }
 
+        countdownController = FindObjectOfType<GameCountdownController>();
+        if (countdownController == null)
+        {
+            Debug.LogWarning("GameCountdownController not found in scene.");
+        }
+
         InitializePlotParameters();
         CreatePlotComponents();
         SetupVerticalLine();
@@ -72,6 +81,14 @@ public class PlotController : MonoBehaviour
     private void Update()
     {
         if (!GlobalVariables.settingsComplete) return;
+
+        if (isInterSetPauseActive)
+        {
+            // During inter-set pause, only update dot and vertical line color
+            UpdateDotPosition(fishingRodController.rodPosition);
+            UpdateVerticalLineColor();
+            return;
+        }
 
         if (isPaused || isFinished)
         {
@@ -91,8 +108,21 @@ public class PlotController : MonoBehaviour
 
             if (cyclesCompleted >= reps)
             {
-                isFinished = true;
-                isPaused = true;
+                // Do NOT set isPaused or isFinished here; just start the inter-set pause
+                if (countdownController != null)
+                {
+                    isInterSetPauseActive = true;
+                    if (setsCompleted < 2)
+                    {
+                        countdownController.StartInterSetPause(this);
+                        setsCompleted++;
+                    } else
+                    {
+                        isFinished = true;
+                        countdownController.ShowFinishedMessage();
+                    }
+                    // Debug.Log("setsCompleted: " + setsCompleted);
+                }
                 return;
             }
         }
@@ -391,6 +421,20 @@ public class PlotController : MonoBehaviour
         for (int i = 0; i <= waveResolution; i++)
         {
             SetBeatMarkerColour(i, Color.clear);
+        }
+    }
+
+    public void OnInterSetPauseEnd()
+    {
+        cyclesCompleted = 0;
+        isPaused = false;
+        isFinished = false;
+        isInterSetPauseActive = false;
+
+        // Restart scoring after pause
+        if (fishController != null)
+        {
+            fishController.RestartScoringCoroutine();
         }
     }
 }

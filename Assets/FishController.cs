@@ -33,6 +33,8 @@ public class FishController : MonoBehaviour
     public float score = 0;
     public int fishCaughtCount = 0;
 
+    private Coroutine scoringCoroutine;
+
     void Start()
     {
         if (plotController != null)
@@ -44,7 +46,7 @@ public class FishController : MonoBehaviour
         depthIndicator = FindObjectOfType<DepthIndicatorController>();
         scoreTimeController = FindObjectOfType<ScoreTimeController>();
 
-        StartCoroutine(UpdateFishState());
+        RestartScoringCoroutine();
 
         if (fishPrefab == null)
         {
@@ -108,7 +110,7 @@ public class FishController : MonoBehaviour
 
     private System.Collections.IEnumerator UpdateFishState()
     {
-        while (!plotController.isPaused && !plotController.isFinished)
+        while (!plotController.isPaused && !plotController.isFinished && !plotController.isInterSetPauseActive)
         {
             dotStatus = plotController.dotStatus;
 
@@ -164,6 +166,13 @@ public class FishController : MonoBehaviour
 
             yield return new WaitForSeconds(1.0f);
         }
+    }
+
+    public void RestartScoringCoroutine()
+    {
+        if (scoringCoroutine != null)
+            StopCoroutine(scoringCoroutine);
+        scoringCoroutine = StartCoroutine(UpdateFishState());
     }
 
     private void Update()
@@ -247,7 +256,7 @@ public class FishController : MonoBehaviour
         float z = fishSpawnLocation.z + Mathf.Sin(timeCounter) * radius;
         float offset = Mathf.Sin(timeCounter * 3f) * squiggleAmplitude;
         float y = (fishDepth * 0.1f) - 4.0f;
-        Debug.Log("Fish Depth: " + fishDepth + " Y Position: " + y);
+        // Debug.Log("Fish Depth: " + fishDepth + " Y Position: " + y);
         if (y >= -2.5f)
         {
             y = -2.5f; // cap max height

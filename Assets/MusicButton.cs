@@ -32,4 +32,16 @@ public class MusicButton : MonoBehaviour
                 buttonText.text = au.clip != null ? au.clip.name : "Playing";
         }
     }
+
+    public void PauseMusic()
+    {
+        if (au != null && au.isPlaying)
+            au.Pause();
+    }
+
+    public void ResumeMusic()
+    {
+        if (au != null)
+            au.UnPause();
+    }
 }
