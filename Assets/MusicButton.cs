@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MusicButton : MonoBehaviour
 {
@@ -11,10 +8,13 @@ public class MusicButton : MonoBehaviour
     [SerializeField] AudioSource au;
     [SerializeField] TextMeshProUGUI buttonText;
 
+    [SerializeField] float bpm = 120f; // Beats per minute
+    [SerializeField] int beatOffset = 0; // Offset in beats
+
     // Start is called before the first frame update
     void Start()
     {
-    au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
+        au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
     }
 
     void OnButtonClick()
@@ -27,7 +27,13 @@ public class MusicButton : MonoBehaviour
         if (!musicEnabled)
         {
             musicEnabled = true;
-            au.Play();
+
+            // Calculate delay time based on beatOffset and bpm
+            float delayTime = (beatOffset / bpm) * 60f;
+
+            // Play the audio with the calculated delay
+            au.PlayDelayed(delayTime);
+
             if (buttonText != null)
                 buttonText.text = au.clip != null ? au.clip.name : "Playing";
         }

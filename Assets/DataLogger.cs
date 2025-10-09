@@ -35,11 +35,10 @@ public class DataLogger : MonoBehaviour
 
     void Update()
     {
-        if (!plotController.isPaused && !plotController.isFinished)
+        time += Time.deltaTime;
+        logTimer += Time.deltaTime;
+        if (!plotController.isPaused && !plotController.isFinished && !plotController.isInterSetPauseActive)
         {
-            time += Time.deltaTime;
-            logTimer += Time.deltaTime;
-
             if (logTimer >= logInterval)
             {
                 LogData();
