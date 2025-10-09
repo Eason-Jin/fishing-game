@@ -56,7 +56,7 @@ public class DataLogger : MonoBehaviour
 
     private void LogData()
     {
-        string row = string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", time, plotController.targetY, fishingRodController.rodPosition, plotController.dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, plotController.beatOffset, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
+        string row = string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", time, plotController.targetY, fishingRodController.rodPosition, plotController.dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, GlobalVariables.delay, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
         csvContent.AppendLine(row);
     }
 

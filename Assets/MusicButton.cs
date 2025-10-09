@@ -8,19 +8,10 @@ public class MusicButton : MonoBehaviour
     [SerializeField] AudioSource au;
     [SerializeField] TextMeshProUGUI buttonText;
 
-    public PlotController plotController;
-    private float bpm = 120f; // Default BPM
-    private float beatOffset = 0f; // Default beat offset in seconds
-
     // Start is called before the first frame update
     void Start()
     {
         au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
-        if (plotController != null)
-        {
-            bpm = plotController.bpm;
-            beatOffset = plotController.beatOffset;
-        }
     }
 
     void OnButtonClick()
@@ -34,11 +25,8 @@ public class MusicButton : MonoBehaviour
         {
             musicEnabled = true;
 
-            // Calculate delay time based on beatOffset and bpm
-            float delayTime = (beatOffset / bpm);
-
             // Play the audio with the calculated delay
-            au.PlayDelayed(delayTime);
+            au.PlayDelayed(GlobalVariables.delay);
 
             if (buttonText != null)
                 buttonText.text = au.clip != null ? au.clip.name : "Playing";

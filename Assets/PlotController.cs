@@ -21,7 +21,6 @@ public class PlotController : MonoBehaviour
     public float axisLineWidth = 5f;
     public DotStatus dotStatus;
     public float targetY = 0f;
-    public int beatOffset = 0; // Offset relative to wave resolution
     public bool musicEnabled = true;
 
     public bool isPaused = false;
@@ -403,11 +402,11 @@ public class PlotController : MonoBehaviour
         {
             if (firstRedPosition == -1)
             {
-                firstRedPosition = i + beatOffset * 4;
+                firstRedPosition = i;
             }
             else if (secondRedPosition == -1 && i >= firstRedPosition + 5)
             {
-                secondRedPosition = i + beatOffset * 4;
+                secondRedPosition = i;
             }
         }
     }
