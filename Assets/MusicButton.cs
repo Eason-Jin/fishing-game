@@ -35,7 +35,7 @@ public class MusicButton : MonoBehaviour
             musicEnabled = true;
 
             // Calculate delay time based on beatOffset and bpm
-            float delayTime = (beatOffset / bpm) * 60f;
+            float delayTime = (beatOffset / bpm);
 
             // Play the audio with the calculated delay
             au.PlayDelayed(delayTime);

@@ -22,6 +22,7 @@ public class PlotController : MonoBehaviour
     public DotStatus dotStatus;
     public float targetY = 0f;
     public int beatOffset = 0; // Offset relative to wave resolution
+    public bool musicEnabled = true;
 
     public bool isPaused = false;
     public bool isFinished = false;
@@ -39,7 +40,7 @@ public class PlotController : MonoBehaviour
     private RectTransform dot;
     private GameObject xAxisRenderer;
     private GameObject yAxisRenderer;
-    private int waveResolution = 500;
+    private int waveResolution;
     private int firstRedPosition = -1;
     private int secondRedPosition = -1;
     private int setsCompleted = 0;
@@ -50,6 +51,7 @@ public class PlotController : MonoBehaviour
 
     private void Start()
     {
+        waveResolution = (int)bpm * 4;
         if (fishingRodController == null)
         {
             Debug.LogError("FishingRodController is not assigned.");
@@ -116,7 +118,8 @@ public class PlotController : MonoBehaviour
                     {
                         countdownController.StartInterSetPause(this);
                         setsCompleted++;
-                    } else
+                    }
+                    else
                     {
                         isFinished = true;
                         countdownController.ShowFinishedMessage();
@@ -400,11 +403,11 @@ public class PlotController : MonoBehaviour
         {
             if (firstRedPosition == -1)
             {
-                firstRedPosition = i + beatOffset;
+                firstRedPosition = i + beatOffset * 4;
             }
             else if (secondRedPosition == -1 && i >= firstRedPosition + 5)
             {
-                secondRedPosition = i + beatOffset;
+                secondRedPosition = i + beatOffset * 4;
             }
         }
     }
