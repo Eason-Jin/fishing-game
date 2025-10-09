@@ -8,13 +8,19 @@ public class MusicButton : MonoBehaviour
     [SerializeField] AudioSource au;
     [SerializeField] TextMeshProUGUI buttonText;
 
-    [SerializeField] float bpm = 120f; // Beats per minute
-    [SerializeField] int beatOffset = 0; // Offset in beats
+    public PlotController plotController;
+    private float bpm = 120f; // Default BPM
+    private float beatOffset = 0f; // Default beat offset in seconds
 
     // Start is called before the first frame update
     void Start()
     {
         au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
+        if (plotController != null)
+        {
+            bpm = plotController.bpm;
+            beatOffset = plotController.beatOffset;
+        }
     }
 
     void OnButtonClick()
