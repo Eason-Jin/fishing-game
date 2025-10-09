@@ -35,11 +35,10 @@ public class DataLogger : MonoBehaviour
 
     void Update()
     {
-        if (!plotController.isPaused && !plotController.isFinished)
+        time += Time.deltaTime;
+        logTimer += Time.deltaTime;
+        if (!plotController.isPaused && !plotController.isFinished && !plotController.isInterSetPauseActive)
         {
-            time += Time.deltaTime;
-            logTimer += Time.deltaTime;
-
             if (logTimer >= logInterval)
             {
                 LogData();
@@ -57,7 +56,8 @@ public class DataLogger : MonoBehaviour
 
     private void LogData()
     {
-        string row = string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", time, plotController.targetY, fishingRodController.rodPosition, plotController.dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, plotController.beatOffset, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
+        bool hasOffset = GlobalVariables.delay == 0.0f;
+        string row = string.Format("{0},{1},{2},{3},{4},{5},{6},{7}", time, plotController.targetY, fishingRodController.rodPosition, plotController.dotStatus.ToString(), fishController.score, fishController.fishCaughtCount, hasOffset, int.Parse(PlayerPrefs.GetString("PlayerWeight", "-1")));
         csvContent.AppendLine(row);
     }
 

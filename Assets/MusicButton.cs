@@ -1,8 +1,5 @@
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class MusicButton : MonoBehaviour
 {
@@ -14,7 +11,7 @@ public class MusicButton : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-    au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
+        au.volume = float.Parse(SettingsController.Instance.GetVolume()) * 0.01f;
     }
 
     void OnButtonClick()
@@ -27,9 +24,24 @@ public class MusicButton : MonoBehaviour
         if (!musicEnabled)
         {
             musicEnabled = true;
-            au.Play();
+
+            // Play the audio with the calculated delay
+            au.PlayDelayed(GlobalVariables.delay);
+
             if (buttonText != null)
                 buttonText.text = au.clip != null ? au.clip.name : "Playing";
         }
+    }
+
+    public void PauseMusic()
+    {
+        if (au != null && au.isPlaying)
+            au.Pause();
+    }
+
+    public void ResumeMusic()
+    {
+        if (au != null)
+            au.UnPause();
     }
 }
