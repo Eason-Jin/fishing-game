@@ -113,7 +113,7 @@ public class PlotController : MonoBehaviour
                 if (countdownController != null)
                 {
                     isInterSetPauseActive = true;
-                    if (setsCompleted < 2)
+                    if (setsCompleted < 1)
                     {
                         countdownController.StartInterSetPause(this);
                         setsCompleted++;
