@@ -1,7 +1,6 @@
-# Immersive Rhythm Games and Strength Training
-explain the project
+# Rhythm and Immersive Games for Strength Training
 ## Game Overview
-explain the game, 
+The game is a VR fishing game where players use a cable machine with VR controllers connected to it to control the fishing rod. TO gain more points and fish, players will need to perform reps in time with background music. Each game will have two sets of 8 reps with a 2 minute rest in between.
 
 ## Project Folder Structure
 ```
@@ -21,13 +20,26 @@ explain the game,
 
 #### Software
 * Unity Version 2022.3.62f1
+* Meta Quest Link
 
 ### Running the Game
 * Import the project in Unity Hub
 * Open the project in Unity
 * Go to the `Home` scene in `Assets/Scenes/Home.unity`
+* Click the `Play` button at the top of the Unity Editor to run the game in Play Mode
 
 ### Cable Machine Setup
+* Before pressing play, you will need to set up the cable machine and VR controls
+
+![Cable Machine Setup](cable_machine.png)
+
+## Playing the Game
+* When the game starts, you will be in the home scene
+* Before playing the game, you will need to calibrate the lowest and highest points of your movement.
+* Go into Settings to calibrate.
+* Select `Set min` to set the lowest point of your movement.
+* Select `Set max` to set the highest point of your movement.
+* Go back to the home scene, and select `Play` to start the game.
 
 ## Third-party Assets:
 - [URP Stylized Water Shader - Proto Series](https://assetstore.unity.com/packages/vfx/shaders/urp-stylized-water-shader-proto-series-187485) - Extension Asset License
