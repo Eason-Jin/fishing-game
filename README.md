@@ -1,6 +1,6 @@
 # Rhythm and Immersive Games for Strength Training
-## Game Overview
-The game is a VR fishing game where players use a cable machine with VR controllers connected to it to control the fishing rod. TO gain more points and fish, players will need to perform reps in time with background music. Each game will have two sets of 8 reps with a 2 minute rest in between.
+
+The game is a VR fishing game where players perform bicep curls a cable machine with VR controllers connected to it to control the fishing rod. To gain more points and fish, players will need to perform reps in time with background music. Each game will have two sets of 8 reps with a 2 minute rest in between.
 
 ## Project Folder Structure
 ```
@@ -30,7 +30,10 @@ The game is a VR fishing game where players use a cable machine with VR controll
 
 ### Cable Machine Setup
 * Before pressing play, you will need to set up the cable machine and VR controls
+* The VR controllers should be attached to the cable machine handles using 3D printed handles with the controllers in them.
+![Cable Machine + VR Controller Setup ](1-44bba5cc.png)
 
+* The bicep curls are to be performed in a similar manner to the image shown below.
 ![Cable Machine Setup](cable_machine.png)
 
 ## Playing the Game
