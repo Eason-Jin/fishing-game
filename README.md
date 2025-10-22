@@ -25,13 +25,18 @@ The game is a VR fishing game where players perform bicep curls a cable machine 
 ### Running the Game
 * Import the project in Unity Hub
 * Open the project in Unity
-* Go to the `Home` scene in `Assets/Scenes/Home.unity`
+* You will be taken to the `Home` scene in `Assets/Scenes/Home.unity`
+![Home scene](home.png)
+* Before playing the game, go to settings to calibrate your movement range and set the weight of the cable machine you are using.
+![Settings scene](settings.png)
+* Once you have calibrated your movement range and set the weight, go back to the `Home` scene.
 * Click the `Play` button at the top of the Unity Editor to run the game in Play Mode
+![Game scene](game.png)
 
 ### Cable Machine Setup
 * Before pressing play, you will need to set up the cable machine and VR controls
 * The VR controllers should be attached to the cable machine handles using 3D printed handles with the controllers in them.
-![Cable Machine + VR Controller Setup ](1-44bba5cc.png)
+![Cable Machine + VR Controller Setup](1-44bba5cc.png)
 
 * The bicep curls are to be performed in a similar manner to the image shown below.
 ![Cable Machine Setup](cable_machine.png)
