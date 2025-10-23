@@ -16,7 +16,8 @@ The game is a VR fishing game where players perform bicep curls a cable machine 
 ### Prerequisites
 #### Hardware
 * [Computer specifications](https://www.meta.com/en-gb/help/quest/140991407990979/#specs.)
-* Meta quest something headset TODO
+* Meta quest pro 3
+* Oculus V79.1034
 
 #### Software
 * Unity Version 2022.3.62f1
